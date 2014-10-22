@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">EV3Controller</string>
+    <string name="scanning">スキャン中...</string>
+    <string name="select_device">接続するデバイスを選択してください</string>
+    <string name="none_found">デバイスが見つかりません</string>
+    <string name="none_paired">ペアリングされたデバイスはありません</string>
+    <string name="forward">F</string>
+    <string name="backward">B</string>
+    <string name="stop">S</string>
+    <string name="percent">Pct</string>
+    <string name="si_unit">SI</string>
+    <string name="connect">Connect</string>
+
+</resources>
