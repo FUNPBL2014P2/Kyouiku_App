@@ -22,6 +22,7 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ImageView;
 
 public class MainActivity extends Activity {
 
@@ -39,6 +40,9 @@ public class MainActivity extends Activity {
 
 	private Button mConnectButton;
 	private BluetoothAdapter mBtAdapter = null;
+
+	private ImageView[] arrows = new ImageView[8];
+	private ImageView[] blocks = new ImageView[4];
 
 	private static final int REQUEST_ENABLE_BT = 1;
 	private static final int REQUEST_CONNECT_DEVICE = 2;
@@ -96,13 +100,19 @@ public class MainActivity extends Activity {
 			mMotorSeekBars[i] = (SeekBar) findViewById(getResources().getIdentifier("sb.motor" + (i + 1), "id", getPackageName()));
 			mForwardButtons[i] = (Button) findViewById(getResources().getIdentifier("bt.forward" + (i + 1), "id", getPackageName()));
 			mBackwardButtons[i] = (Button) findViewById(getResources().getIdentifier("bt.backward" + (i + 1), "id", getPackageName()));
-			mStopButtons[i] = (Button) findViewById(getResources().getIdentifier("bt.stop" + (i + 1), "id", getPackageName()));
+			mStopButtons[i] = (Button) findViewById(getResources().getIdentifier("bt.stop" + (i + 1)	, "id", getPackageName()));
 
 			mSensorNameTexts[i] = (TextView) findViewById(getResources().getIdentifier("tv.sensorName" + (i + 1), "id", getPackageName()));
 			mSensorValueTexts[i] = (TextView) findViewById(getResources().getIdentifier("tv.sensor" + (i + 1), "id", getPackageName()));
 			mGetPercentValueButtons[i] = (Button) findViewById(getResources().getIdentifier("bt.percent" + (i + 1), "id", getPackageName()));
 			mGetSiUnitValueButtons[i] = (Button) findViewById(getResources().getIdentifier("bt.si" + (i + 1), "id", getPackageName()));
 		}*/
+		for(int i=0;i<8;i++){
+			arrows[i] = (ImageView) findViewById(getResources().getIdentifier("imgaeView"+(i+1), "id", getPackageName()));
+		}
+		for(int i=0;i<4;i++){
+			blocks[i] = (ImageView) findViewById(getResources().getIdentifier("imageView"+(i+9), "id", getPackageName()));
+		}
 		mConnectButton = (Button) findViewById(R.id.bt_connect);
 	}
 
