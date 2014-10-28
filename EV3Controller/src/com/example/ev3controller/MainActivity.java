@@ -23,6 +23,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ImageView;
+import android.view.MotionEvent;
 
 public class MainActivity extends Activity {
 
@@ -51,6 +52,8 @@ public class MainActivity extends Activity {
 
 	private static final int FAILED_TO_CONNECT = 1;
 	private static final int SUCCEEDED_CONNECTING = 2;
+
+	int arrayNum;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -195,6 +198,31 @@ public class MainActivity extends Activity {
 		});
 	}
 
+	@Override
+	public boolean onTouchEvent(MotionEvent event){
+		switch(event.getAction()){
+		case MotionEvent.ACTION_DOWN:
+			//矢印の向きに合わせて進む
+			System.out.println("DOWN");
+			for(int i=0;i<4;i++){
+			blocks[i].setImageResource(R.drawable.pinkblock);
+			}
+			break;
+		case MotionEvent.ACTION_UP:
+			//ストップ
+			for(int i=0;i<4;i++){
+				blocks[i].setImageResource(R.drawable.grayblock);
+				}
+			System.out.println("UP");
+		//case MotionEvent.ACTION_MOVE:
+			//break;
+		}
+		return true;
+	}
+
+
+
+
 	private void findEV3Device() {
 		// Turns on Bluetooth
 		if (!mBtAdapter.isEnabled()) {
@@ -277,17 +305,17 @@ public class MainActivity extends Activity {
 		@Override
 		public boolean handleMessage(Message message) {
 			switch (message.what) {
-				case FAILED_TO_CONNECT:
-					new AlertDialog.Builder(MainActivity.this)
-							.setTitle("Bluetooth connection error")
-							.setMessage("Bluetooth デバイスとの接続に失敗しました")
-							.setPositiveButton("OK", null)
-							.show();
-					return true;
+			case FAILED_TO_CONNECT:
+				new AlertDialog.Builder(MainActivity.this)
+				.setTitle("Bluetooth connection error")
+				.setMessage("Bluetooth デバイスとの接続に失敗しました")
+				.setPositiveButton("OK", null)
+				.show();
+				return true;
 
-				case SUCCEEDED_CONNECTING:
-					connected();
-					return true;
+			case SUCCEEDED_CONNECTING:
+				connected();
+				return true;
 			}
 			return false;
 		}
@@ -296,24 +324,24 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
-			case REQUEST_ENABLE_BT:
-				if (resultCode == Activity.RESULT_OK) {
-				}
-				break;
+		case REQUEST_ENABLE_BT:
+			if (resultCode == Activity.RESULT_OK) {
+			}
+			break;
 
-			case REQUEST_CONNECT_DEVICE:
-				// When DeviceListActivity returns with a device to connect
-				if (resultCode == Activity.RESULT_OK) {
-					// Get the device MAC address
-					String address = data.getExtras().getString(
-							DeviceListActivity.EXTRA_DEVICE_ADDRESS);
-					// Get the BluetoothDevice object
-					BluetoothDevice device = mBtAdapter
-							.getRemoteDevice(address);
-					// Attempt to connect to the device
-					foundEV3Device(device);
-				}
-				break;
+		case REQUEST_CONNECT_DEVICE:
+			// When DeviceListActivity returns with a device to connect
+			if (resultCode == Activity.RESULT_OK) {
+				// Get the device MAC address
+				String address = data.getExtras().getString(
+						DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+				// Get the BluetoothDevice object
+				BluetoothDevice device = mBtAdapter
+						.getRemoteDevice(address);
+				// Attempt to connect to the device
+				foundEV3Device(device);
+			}
+			break;
 		}
 	}
 }
