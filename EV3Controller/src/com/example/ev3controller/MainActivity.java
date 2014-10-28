@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ImageView;
 import android.view.MotionEvent;
+import android.graphics.Rect;
 
 public class MainActivity extends Activity {
 
@@ -53,8 +54,9 @@ public class MainActivity extends Activity {
 	private static final int FAILED_TO_CONNECT = 1;
 	private static final int SUCCEEDED_CONNECTING = 2;
 
-	int arrayNum;
+	private int arrayNum;
 
+	private Rect rect;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -64,6 +66,9 @@ public class MainActivity extends Activity {
 		setUpEV3();
 		findViews();
 		setUpButtons();
+		for(int i=0;i<8;i++){
+		setUpViews(arrows[i]);
+		}
 		//setUpSeekBars();
 
 		// UI should be disabled until this device connects to EV3
@@ -198,27 +203,28 @@ public class MainActivity extends Activity {
 		});
 	}
 
+	private void setUpViews(ImageView view) {
+		if(view == null) return;
+		rect = new Rect(0, 0, view.getWidth(), view.getHeight());
+	}
+
 	@Override
 	public boolean onTouchEvent(MotionEvent event){
 		switch(event.getAction()){
 		case MotionEvent.ACTION_DOWN:
 			//矢印の向きに合わせて進む
 			System.out.println("DOWN");
-			for(int i=0;i<4;i++){
-			blocks[i].setImageResource(R.drawable.pinkblock);
-			}
 			break;
 		case MotionEvent.ACTION_UP:
 			//ストップ
-			for(int i=0;i<4;i++){
-				blocks[i].setImageResource(R.drawable.grayblock);
-				}
 			System.out.println("UP");
 		//case MotionEvent.ACTION_MOVE:
 			//break;
 		}
 		return true;
 	}
+
+
 
 
 
