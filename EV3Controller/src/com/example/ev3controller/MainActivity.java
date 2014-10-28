@@ -56,7 +56,7 @@ public class MainActivity extends Activity {
 
 	private int arrayNum;
 
-	private Rect rect;
+	private Rect[] rect = new Rect[8];
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -67,7 +67,7 @@ public class MainActivity extends Activity {
 		findViews();
 		setUpButtons();
 		for(int i=0;i<8;i++){
-		setUpViews(arrows[i]);
+			setUpViews(arrows[i]);
 		}
 		//setUpSeekBars();
 
@@ -205,7 +205,9 @@ public class MainActivity extends Activity {
 
 	private void setUpViews(ImageView view) {
 		if(view == null) return;
-		rect = new Rect(0, 0, view.getWidth(), view.getHeight());
+		for(int i=0;i<8;i++){
+			rect[i] = new Rect(0, 0, view.getWidth(), view.getHeight());
+		}
 	}
 
 	@Override
@@ -218,13 +220,21 @@ public class MainActivity extends Activity {
 		case MotionEvent.ACTION_UP:
 			//ストップ
 			System.out.println("UP");
-		//case MotionEvent.ACTION_MOVE:
+			//case MotionEvent.ACTION_MOVE:
 			//break;
 		}
 		return true;
 	}
 
-
+	private boolean isTouchImage(int x,int y) {
+		for(int i=0;i<8;i++){
+			int imgX = rect[i].left;
+			int imgY = rect[i].top;
+			if( x-imgX >= 0 && x-imgX < rect[i].width() && y-imgY >= 0 && y-imgY < rect[i].height())
+				return true;
+		}
+		return false;
+	}
 
 
 
