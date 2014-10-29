@@ -227,7 +227,21 @@ public class MainActivity extends Activity {
 		switch(event.getAction()){
 		case MotionEvent.ACTION_DOWN:
 			//矢印の向きに合わせて進む
-			System.out.println("DOWN");
+			int number=8;
+			for(int i=0;i<8;i++){
+				if(arrows[i].getX() <= event.getX() && event.getX() <= arrows[i].getX() + arrows[i].getWidth() &&
+						arrows[i].getY() + arrows[i].getHeight() <= event.getY() &&
+						event.getY() <= arrows[i].getY() + arrows[i].getHeight() * 2)
+							number=i;
+			}
+			if(number==8){
+				System.out.println("DON'T TOUCH ARROWS");
+				System.out.println(event.getX()+":"+event.getY());
+			}else{
+				System.out.println("YOU TOUCH NUMBER "+number+" ARROW");
+				System.out.println(arrows[number].getX()+":"+arrows[number].getWidth()+":"+arrows[number].getY()+":"+
+						arrows[number].getHeight()+":"+event.getX()+":"+event.getY());
+			}
 			break;
 		case MotionEvent.ACTION_UP:
 			//ストップ
