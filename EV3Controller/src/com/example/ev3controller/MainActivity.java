@@ -23,6 +23,8 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ImageView;
+import android.view.MotionEvent;
+import android.graphics.Rect;
 
 public class MainActivity extends Activity {
 
@@ -52,6 +54,9 @@ public class MainActivity extends Activity {
 	private static final int FAILED_TO_CONNECT = 1;
 	private static final int SUCCEEDED_CONNECTING = 2;
 
+	private int arrayNum;
+
+	private Rect[] rect = new Rect[8];
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -61,6 +66,9 @@ public class MainActivity extends Activity {
 		setUpEV3();
 		findViews();
 		setUpButtons();
+		for(int i=0;i<8;i++){
+			setUpViews(arrows[i], i);
+		}
 		//setUpSeekBars();
 
 		// UI should be disabled until this device connects to EV3
@@ -107,13 +115,27 @@ public class MainActivity extends Activity {
 			mGetPercentValueButtons[i] = (Button) findViewById(getResources().getIdentifier("bt.percent" + (i + 1), "id", getPackageName()));
 			mGetSiUnitValueButtons[i] = (Button) findViewById(getResources().getIdentifier("bt.si" + (i + 1), "id", getPackageName()));
 		}*/
-		for(int i=0;i<8;i++){
+		/*for(int i=0;i<8;i++){
 			arrows[i] = (ImageView) findViewById(getResources().getIdentifier("imgaeView"+(i+1), "id", getPackageName()));
 		}
 		for(int i=0;i<4;i++){
 			blocks[i] = (ImageView) findViewById(getResources().getIdentifier("imageView"+(i+9), "id", getPackageName()));
-		}
+		}*/
+		arrows[0] = (ImageView) findViewById(R.id.imageView1);
+		arrows[1] = (ImageView) findViewById(R.id.imageView2);
+		arrows[2] = (ImageView) findViewById(R.id.imageView3);
+		arrows[3] = (ImageView) findViewById(R.id.imageView4);
+		arrows[4] = (ImageView) findViewById(R.id.imageView5);
+		arrows[5] = (ImageView) findViewById(R.id.imageView6);
+		arrows[6] = (ImageView) findViewById(R.id.imageView7);
+		arrows[7] = (ImageView) findViewById(R.id.imageView8);
+
+		blocks[0] = (ImageView) findViewById(R.id.imageView9);
+		blocks[1] = (ImageView) findViewById(R.id.imageView10);
+		blocks[2] = (ImageView) findViewById(R.id.imageView11);
+		blocks[3] = (ImageView) findViewById(R.id.imageView12);
 		mConnectButton = (Button) findViewById(R.id.bt_connect);
+
 	}
 
 	private int getIndex(View v, View[] vs) {
@@ -194,6 +216,54 @@ public class MainActivity extends Activity {
 			}
 		});
 	}
+
+	private void setUpViews(ImageView view, int i) {
+		if(view == null) return;
+			rect[i] = new Rect(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
+	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent event){
+		switch(event.getAction()){
+		case MotionEvent.ACTION_DOWN:
+			//矢印の向きに合わせて進む
+			int number=8;
+			for(int i=0;i<8;i++){
+				if(arrows[i].getX() <= event.getX() && event.getX() <= arrows[i].getX() + arrows[i].getWidth() &&
+						arrows[i].getY() + arrows[i].getHeight() <= event.getY() &&
+						event.getY() <= arrows[i].getY() + arrows[i].getHeight() * 2)
+							number=i;
+			}
+			if(number==8){
+				System.out.println("DON'T TOUCH ARROWS");
+				System.out.println(event.getX()+":"+event.getY());
+			}else{
+				System.out.println("YOU TOUCH NUMBER "+number+" ARROW");
+				System.out.println(arrows[number].getX()+":"+arrows[number].getWidth()+":"+arrows[number].getY()+":"+
+						arrows[number].getHeight()+":"+event.getX()+":"+event.getY());
+			}
+			break;
+		case MotionEvent.ACTION_UP:
+			//ストップ
+			System.out.println("UP");
+			//case MotionEvent.ACTION_MOVE:
+			//break;
+		}
+		return true;
+	}
+
+	private boolean isTouchImage(int x,int y) {
+		for(int i=0;i<8;i++){
+			int imgX = rect[i].left;
+			int imgY = rect[i].top;
+			if( x-imgX >= 0 && x-imgX < rect[i].width() && y-imgY >= 0 && y-imgY < rect[i].height())
+				return true;
+		}
+		return false;
+	}
+
+
+
 
 	private void findEV3Device() {
 		// Turns on Bluetooth
@@ -277,17 +347,17 @@ public class MainActivity extends Activity {
 		@Override
 		public boolean handleMessage(Message message) {
 			switch (message.what) {
-				case FAILED_TO_CONNECT:
-					new AlertDialog.Builder(MainActivity.this)
-							.setTitle("Bluetooth connection error")
-							.setMessage("Bluetooth デバイスとの接続に失敗しました")
-							.setPositiveButton("OK", null)
-							.show();
-					return true;
+			case FAILED_TO_CONNECT:
+				new AlertDialog.Builder(MainActivity.this)
+				.setTitle("Bluetooth connection error")
+				.setMessage("Bluetooth デバイスとの接続に失敗しました")
+				.setPositiveButton("OK", null)
+				.show();
+				return true;
 
-				case SUCCEEDED_CONNECTING:
-					connected();
-					return true;
+			case SUCCEEDED_CONNECTING:
+				connected();
+				return true;
 			}
 			return false;
 		}
@@ -296,24 +366,24 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
-			case REQUEST_ENABLE_BT:
-				if (resultCode == Activity.RESULT_OK) {
-				}
-				break;
+		case REQUEST_ENABLE_BT:
+			if (resultCode == Activity.RESULT_OK) {
+			}
+			break;
 
-			case REQUEST_CONNECT_DEVICE:
-				// When DeviceListActivity returns with a device to connect
-				if (resultCode == Activity.RESULT_OK) {
-					// Get the device MAC address
-					String address = data.getExtras().getString(
-							DeviceListActivity.EXTRA_DEVICE_ADDRESS);
-					// Get the BluetoothDevice object
-					BluetoothDevice device = mBtAdapter
-							.getRemoteDevice(address);
-					// Attempt to connect to the device
-					foundEV3Device(device);
-				}
-				break;
+		case REQUEST_CONNECT_DEVICE:
+			// When DeviceListActivity returns with a device to connect
+			if (resultCode == Activity.RESULT_OK) {
+				// Get the device MAC address
+				String address = data.getExtras().getString(
+						DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+				// Get the BluetoothDevice object
+				BluetoothDevice device = mBtAdapter
+						.getRemoteDevice(address);
+				// Attempt to connect to the device
+				foundEV3Device(device);
+			}
+			break;
 		}
 	}
 }
