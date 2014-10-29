@@ -115,13 +115,27 @@ public class MainActivity extends Activity {
 			mGetPercentValueButtons[i] = (Button) findViewById(getResources().getIdentifier("bt.percent" + (i + 1), "id", getPackageName()));
 			mGetSiUnitValueButtons[i] = (Button) findViewById(getResources().getIdentifier("bt.si" + (i + 1), "id", getPackageName()));
 		}*/
-		for(int i=0;i<8;i++){
+		/*for(int i=0;i<8;i++){
 			arrows[i] = (ImageView) findViewById(getResources().getIdentifier("imgaeView"+(i+1), "id", getPackageName()));
 		}
 		for(int i=0;i<4;i++){
 			blocks[i] = (ImageView) findViewById(getResources().getIdentifier("imageView"+(i+9), "id", getPackageName()));
-		}
+		}*/
+		arrows[0] = (ImageView) findViewById(R.id.imageView1);
+		arrows[1] = (ImageView) findViewById(R.id.imageView2);
+		arrows[2] = (ImageView) findViewById(R.id.imageView3);
+		arrows[3] = (ImageView) findViewById(R.id.imageView4);
+		arrows[4] = (ImageView) findViewById(R.id.imageView5);
+		arrows[5] = (ImageView) findViewById(R.id.imageView6);
+		arrows[6] = (ImageView) findViewById(R.id.imageView7);
+		arrows[7] = (ImageView) findViewById(R.id.imageView8);
+
+		blocks[0] = (ImageView) findViewById(R.id.imageView9);
+		blocks[1] = (ImageView) findViewById(R.id.imageView10);
+		blocks[2] = (ImageView) findViewById(R.id.imageView11);
+		blocks[3] = (ImageView) findViewById(R.id.imageView12);
 		mConnectButton = (Button) findViewById(R.id.bt_connect);
+
 	}
 
 	private int getIndex(View v, View[] vs) {
