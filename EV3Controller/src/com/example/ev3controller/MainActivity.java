@@ -67,7 +67,7 @@ public class MainActivity extends Activity {
 		findViews();
 		setUpButtons();
 		for(int i=0;i<8;i++){
-			setUpViews(arrows[i]);
+			setUpViews(arrows[i], i);
 		}
 		//setUpSeekBars();
 
@@ -217,11 +217,9 @@ public class MainActivity extends Activity {
 		});
 	}
 
-	private void setUpViews(ImageView view) {
+	private void setUpViews(ImageView view, int i) {
 		if(view == null) return;
-		for(int i=0;i<8;i++){
-			rect[i] = new Rect(0, 0, view.getWidth(), view.getHeight());
-		}
+			rect[i] = new Rect(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
 	}
 
 	@Override
