@@ -242,10 +242,14 @@ public class MainActivity extends Activity {
 				System.out.println(arrows[number].getX()+":"+arrows[number].getWidth()+":"+arrows[number].getY()+":"+
 						arrows[number].getHeight()+":"+event.getX()+":"+event.getY());
 			}
+			if(number<8) moveEV3(number);
 			break;
 		case MotionEvent.ACTION_UP:
 			//ストップ
 			System.out.println("UP");
+			mMotors[0].stop();
+			mMotors[3].stop();
+
 			//case MotionEvent.ACTION_MOVE:
 			//break;
 		}
@@ -260,6 +264,60 @@ public class MainActivity extends Activity {
 				return true;
 		}
 		return false;
+	}
+
+	private void moveEV3(int number){
+		switch(number){
+		case 0:
+			mMotors[0].setSpeed(100);
+			mMotors[3].setSpeed(100);
+			mMotors[0].forward();
+			mMotors[3].forward();
+			break;
+		case 1:
+			mMotors[0].setSpeed(50);
+			mMotors[3].setSpeed(100);
+			mMotors[0].forward();
+			mMotors[3].forward();
+			break;
+		case 2:
+			mMotors[0].setSpeed(0);
+			mMotors[3].setSpeed(100);
+			mMotors[0].forward();
+			mMotors[3].forward();
+			break;
+		case 3:
+			mMotors[0].setSpeed(50);
+			mMotors[3].setSpeed(100);
+			mMotors[0].backward();
+			mMotors[3].backward();
+			break;
+		case 4:
+			mMotors[0].setSpeed(100);
+			mMotors[3].setSpeed(100);
+			mMotors[0].backward();
+			mMotors[3].backward();
+			break;
+		case 5:
+			mMotors[0].setSpeed(100);
+			mMotors[3].setSpeed(50);
+			mMotors[0].backward();
+			mMotors[3].backward();
+			break;
+		case 6:
+			mMotors[0].setSpeed(100);
+			mMotors[3].setSpeed(0);
+			mMotors[0].forward();
+			mMotors[3].forward();
+			break;
+		case 7:
+			mMotors[0].setSpeed(100);
+			mMotors[3].setSpeed(50);
+			mMotors[0].forward();
+			mMotors[3].forward();
+			break;
+
+		}
 	}
 
 
