@@ -83,24 +83,6 @@
         android:src="@drawable/go6" />
 
     <ImageView
-        android:id="@+id/imageView11"
-        android:layout_width="250dp"
-        android:layout_height="100dp"
-        android:layout_alignTop="@+id/imageView1"
-        android:layout_marginLeft="34dp"
-        android:layout_toRightOf="@+id/imageView3"
-        android:src="@drawable/grayblock" />
-
-    <ImageView
-        android:id="@+id/imageView9"
-        android:layout_width="250dp"
-        android:layout_height="100dp"
-        android:layout_alignLeft="@+id/imageView11"
-        android:layout_below="@+id/imageView11"
-        android:layout_marginTop="11dp"
-        android:src="@drawable/grayblock" />
-
-    <ImageView
         android:id="@+id/imageView10"
         android:layout_width="250dp"
         android:layout_height="100dp"
@@ -123,6 +105,24 @@
         android:layout_height="100dp"
         android:layout_alignLeft="@+id/imageView10"
         android:layout_alignTop="@+id/imageView5"
+        android:src="@drawable/grayblock" />
+
+    <ImageView
+        android:id="@+id/imageView9"
+        android:layout_width="250dp"
+        android:layout_height="100dp"
+        android:layout_alignTop="@+id/imageView1"
+        android:layout_marginRight="12dp"
+        android:layout_toLeftOf="@+id/bt.connect"
+        android:src="@drawable/grayblock" />
+
+    <ImageView
+        android:id="@+id/imageView11"
+        android:layout_width="250dp"
+        android:layout_height="100dp"
+        android:layout_alignLeft="@+id/imageView10"
+        android:layout_below="@+id/imageView10"
+        android:layout_marginTop="12dp"
         android:src="@drawable/grayblock" />
 
 </RelativeLayout>
