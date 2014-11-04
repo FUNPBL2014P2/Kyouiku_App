@@ -399,7 +399,7 @@ public class MainActivity extends Activity {
 		}
 
 		WatchingSensor wSensor = new WatchingSensor(mSensors, Str, blocks);
-		timer.schedule(wSensor, 1,1);
+		timer.schedule(wSensor, 0,1);
 		//Thread thread = new Thread(wSensor);
 		//thread.start();
 	}
