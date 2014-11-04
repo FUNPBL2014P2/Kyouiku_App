@@ -25,6 +25,8 @@ import android.widget.Toast;
 import android.widget.ImageView;
 import android.view.MotionEvent;
 import android.graphics.Rect;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends Activity {
 
@@ -57,6 +59,8 @@ public class MainActivity extends Activity {
 	private int arrayNum;
 
 	StringBuffer[] Str = new StringBuffer[4];//センサ値
+	Timer timer = new Timer();
+	//TimerTask timertask = new TimerTask();
 
 	private Rect[] rect = new Rect[8];
 	@Override
@@ -394,9 +398,10 @@ public class MainActivity extends Activity {
 			Log.d("MainActivity", "Name: " + name);
 		}
 
-		WatchingSensor wSensor = new WatchingSensor(mSensors, Str);
-		Thread thread = new Thread(wSensor);
-		thread.start();
+		WatchingSensor wSensor = new WatchingSensor(mSensors, Str, blocks);
+		timer.schedule(wSensor, 1,1);
+		//Thread thread = new Thread(wSensor);
+		//thread.start();
 	}
 
 	private void disconnect() {
