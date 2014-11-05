@@ -25,6 +25,8 @@ import android.widget.Toast;
 import android.widget.ImageView;
 import android.view.MotionEvent;
 import android.graphics.Rect;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends Activity {
 
@@ -49,12 +51,16 @@ public class MainActivity extends Activity {
 	private static final int REQUEST_ENABLE_BT = 1;
 	private static final int REQUEST_CONNECT_DEVICE = 2;
 
-	private ProgressDialog mProgressDialog;;
+	private ProgressDialog mProgressDialog;
 
 	private static final int FAILED_TO_CONNECT = 1;
 	private static final int SUCCEEDED_CONNECTING = 2;
 
 	private int arrayNum;
+
+	StringBuffer[] Str = new StringBuffer[4];//センサ値
+	Timer timer = new Timer();
+	//TimerTask timertask = new TimerTask();
 
 	private Rect[] rect = new Rect[8];
 	@Override
@@ -69,6 +75,11 @@ public class MainActivity extends Activity {
 		for(int i=0;i<8;i++){
 			setUpViews(arrows[i], i);
 		}
+
+		for(int i=0;i<4;i++){
+			Str[i] = new StringBuffer();
+		}
+
 		//setUpSeekBars();
 
 		// UI should be disabled until this device connects to EV3
@@ -219,7 +230,7 @@ public class MainActivity extends Activity {
 
 	private void setUpViews(ImageView view, int i) {
 		if(view == null) return;
-			rect[i] = new Rect(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
+		rect[i] = new Rect(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
 	}
 
 	@Override
@@ -232,7 +243,7 @@ public class MainActivity extends Activity {
 				if(arrows[i].getX() <= event.getX() && event.getX() <= arrows[i].getX() + arrows[i].getWidth() &&
 						arrows[i].getY() + arrows[i].getHeight() <= event.getY() &&
 						event.getY() <= arrows[i].getY() + arrows[i].getHeight() * 2)
-							number=i;
+					number=i;
 			}
 			if(number==8){
 				System.out.println("DON'T TOUCH ARROWS");
@@ -250,8 +261,16 @@ public class MainActivity extends Activity {
 			mMotors[0].stop();
 			mMotors[3].stop();
 
-			//case MotionEvent.ACTION_MOVE:
-			//break;
+		/*case MotionEvent.ACTION_MOVE:
+			if(mConnectButton.getText()=="Disconnect"){
+				for(int i=0;i<4;i++){
+					if(Str[i].charAt(Str[i].length()-1)=='p')
+						blocks[i].setImageResource(R.drawable.pinkblock);
+					else
+						blocks[i].setImageResource(R.drawable.grayblock);
+				}
+			}
+			break;*/
 		}
 		return true;
 	}
@@ -321,8 +340,6 @@ public class MainActivity extends Activity {
 	}
 
 
-
-
 	private void findEV3Device() {
 		// Turns on Bluetooth
 		if (!mBtAdapter.isEnabled()) {
@@ -375,11 +392,16 @@ public class MainActivity extends Activity {
 		setUiEnabled(true);
 		Toast.makeText(this, "EV3 Connected", Toast.LENGTH_SHORT).show();
 
+
 		for (int i = 0; i < 4; i++) {
 			String name = mSensors[i].getName();
 			Log.d("MainActivity", "Name: " + name);
-			//mSensorNameTexts[i].setText(name);
 		}
+
+		WatchingSensor wSensor = new WatchingSensor(mSensors, Str, blocks);
+		timer.schedule(wSensor, 0,1);
+		//Thread thread = new Thread(wSensor);
+		//thread.start();
 	}
 
 	private void disconnect() {
