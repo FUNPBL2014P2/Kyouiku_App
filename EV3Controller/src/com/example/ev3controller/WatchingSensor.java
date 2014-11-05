@@ -31,10 +31,12 @@ public class WatchingSensor extends TimerTask{
 			if(Sensors[i].getPercentValue()>=50){
 				sb[i].append('p');
 				System.out.println("センサー"+i+"="+sb[i].charAt(sb[i].length()-1));
+				System.out.println("センサー"+i+"="+sb[i]);
 			}
 			else{
 				sb[i].append('g');
 				System.out.println("センサー"+i+"="+sb[i].charAt(sb[i].length()-1));
+				System.out.println("センサー"+i+"="+sb[i]);
 			}
 			//Handlerに通知する
 			Message msg = new Message();
@@ -51,9 +53,12 @@ public class WatchingSensor extends TimerTask{
 			int index = msg.what;
 			if(sb[index].charAt(sb[index].length()-1)=='p'){
 				blocks[index].setImageResource(R.drawable.pinkblock);
+				sb[index].delete(0, sb[index].length()-1);
+
 			}
 			else{
 				blocks[index].setImageResource(R.drawable.grayblock);
+				sb[index].delete(0, sb[index].length()-1);
 			}
 		}
 	}
