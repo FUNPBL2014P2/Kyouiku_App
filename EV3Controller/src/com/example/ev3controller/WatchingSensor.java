@@ -10,7 +10,7 @@ import android.os.Message;
 
 
 
-public class WatchingSensor extends TimerTask{
+public class WatchingSensor extends Thread{
 	StringBuffer[] sb;
 	private UnidentifiedSensor[] Sensors = new UnidentifiedSensor[4];
 	ImageView[] blocks;
@@ -27,23 +27,24 @@ public class WatchingSensor extends TimerTask{
 	}
 
 	public void run(){
-		for(int i=0;i<4;i++){
-			if(Sensors[i].getPercentValue()>=50){
-				sb[i].append('p');
-				System.out.println("センサー"+i+"="+sb[i].charAt(sb[i].length()-1));
-				System.out.println("センサー"+i+"="+sb[i]);
+		while(!Thread.currentThread().isInterrupted()){
+			for(int i=0;i<4;i++){
+				if(Sensors[i].getPercentValue()>=50){
+					sb[i].append('p');
+					System.out.println("センサー"+i+"="+sb[i]);
+				}
+				else{
+					sb[i].append('g');
+					System.out.println("センサー"+i+"="+sb[i]);
+				}
+				//Handlerに通知する
+				Message msg = new Message();
+				//msgのwhatにselectedIndexの値を格納
+				msg.what = i;
+				//handlerにmsgをsendする。
+				handler.sendMessage(msg);
+
 			}
-			else{
-				sb[i].append('g');
-				System.out.println("センサー"+i+"="+sb[i].charAt(sb[i].length()-1));
-				System.out.println("センサー"+i+"="+sb[i]);
-			}
-			//Handlerに通知する
-			Message msg = new Message();
-			//msgのwhatにselectedIndexの値を格納
-			msg.what = i;
-			//handlerにmsgをsendする。
-			handler.sendMessage(msg);
 		}
 	}
 

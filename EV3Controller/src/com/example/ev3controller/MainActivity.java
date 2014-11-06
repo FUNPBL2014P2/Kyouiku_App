@@ -25,6 +25,7 @@ import android.widget.Toast;
 import android.widget.ImageView;
 import android.view.MotionEvent;
 import android.graphics.Rect;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -55,6 +56,8 @@ public class MainActivity extends Activity {
 
 	private static final int FAILED_TO_CONNECT = 1;
 	private static final int SUCCEEDED_CONNECTING = 2;
+
+	Thread thread;
 
 	private int arrayNum;
 
@@ -386,6 +389,14 @@ public class MainActivity extends Activity {
 		mConnectButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				//timer.cancel();
+				thread.interrupt();
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					// TODO 自動生成された catch ブロック
+					e.printStackTrace();
+				}
 				disconnect();
 			}
 		});
@@ -399,9 +410,10 @@ public class MainActivity extends Activity {
 		}
 
 		WatchingSensor wSensor = new WatchingSensor(mSensors, Str, blocks);
-		timer.schedule(wSensor, 0,1);
-		//Thread thread = new Thread(wSensor);
-		//thread.start();
+		//timer.schedule(wSensor, 0,1);
+		System.out.println("スレッド");
+		thread = new Thread(wSensor);
+		thread.start();
 	}
 
 	private void disconnect() {
