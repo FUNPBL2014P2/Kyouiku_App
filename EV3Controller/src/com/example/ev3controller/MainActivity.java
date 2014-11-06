@@ -303,9 +303,9 @@ public class MainActivity extends Activity {
 			mMotors[3].forward();
 			break;
 		case 2:
-			mMotors[0].setSpeed(0);
+			mMotors[0].setSpeed(100);
 			mMotors[3].setSpeed(100);
-			mMotors[0].forward();
+			mMotors[0].backward();
 			mMotors[3].forward();
 			break;
 		case 3:
@@ -328,9 +328,9 @@ public class MainActivity extends Activity {
 			break;
 		case 6:
 			mMotors[0].setSpeed(100);
-			mMotors[3].setSpeed(0);
+			mMotors[3].setSpeed(100);
 			mMotors[0].forward();
-			mMotors[3].forward();
+			mMotors[3].backward();
 			break;
 		case 7:
 			mMotors[0].setSpeed(100);
