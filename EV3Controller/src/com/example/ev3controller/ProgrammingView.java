@@ -1,6 +1,9 @@
 package com.example.ev3controller;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -8,13 +11,33 @@ import android.graphics.Point;
 import android.view.View;
 
 public class ProgrammingView extends View{
+	Bitmap genreImage[] = new Bitmap[3];//ブロックイメージの読み込み
+	Bitmap startImage;
+	
 	private Point dispSize = new Point();//線を描写するのに必要な変数
+	
 	private int maxHeight;//作業スペースの高さの最大
+	
+	private static final double BLOCK_SCALE = 0.6;
 	
 	//コンストラクタ
 	public ProgrammingView(Context context){
 		super(context);
+		
+		//背景の色を設定
 		this.setBackgroundColor(Color.WHITE);
+		
+		//ジャンルブロックの画像を設定
+		Resources r = context.getResources();
+		genreImage[0] = BitmapFactory.decodeResource(r, R.drawable.movebuton);
+		genreImage[1] = BitmapFactory.decodeResource(r, R.drawable.ifbutton);
+		genreImage[2] = BitmapFactory.decodeResource(r, R.drawable.forbutton);
+		
+		//スタートブロックの画像の設定
+		r = context.getResources();
+		startImage = BitmapFactory.decodeResource(r, R.drawable.start);
+		
+		startImage = Bitmap.createScaledBitmap(startImage, (int)(startImage.getWidth()*BLOCK_SCALE), (int)(startImage.getHeight()*BLOCK_SCALE), false);
 		
 		maxHeight=0;
 	}
@@ -38,6 +61,14 @@ public class ProgrammingView extends View{
 		//インスタンスエリアとワークスペースの境界線
 		x = dispSize.x / 5 * 2;
 		canvas.drawLine(x, 0, x, y, paint);
+		
+		//ジャンルボタン
+		for(int i=0; i<3; i++){
+			canvas.drawBitmap(genreImage[i], 25, 25+200*i, null);
+		}
+		
+		//スタートボタン
+		canvas.drawBitmap(startImage, 900, 25, null);
 	}
 
 	//View生成時にViewの大きさを設定するためのメソッド
