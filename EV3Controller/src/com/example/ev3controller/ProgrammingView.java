@@ -68,7 +68,7 @@ public class ProgrammingView extends View{
 		}
 		
 		//スタートボタン
-		canvas.drawBitmap(startImage, 900, 25, null);
+		canvas.drawBitmap(startImage, x2+30, 25, null);
 	}
 
 	//View生成時にViewの大きさを設定するためのメソッド
