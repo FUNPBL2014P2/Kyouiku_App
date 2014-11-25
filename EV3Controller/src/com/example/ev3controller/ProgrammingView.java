@@ -33,7 +33,7 @@ public class ProgrammingView extends View{
 
 		//ジャンルブロックの画像を設定
 		Resources r = context.getResources();
-		genreImage[0] = BitmapFactory.decodeResource(r, R.drawable.movebuton);
+		genreImage[0] = BitmapFactory.decodeResource(r, R.drawable.movebutton);
 		genreImage[1] = BitmapFactory.decodeResource(r, R.drawable.ifbutton);
 		genreImage[2] = BitmapFactory.decodeResource(r, R.drawable.forbutton);
 
@@ -118,10 +118,16 @@ public class ProgrammingView extends View{
 
 				}
 				else if(genre==2){//「じょうけん」
-					instanceFlag = false;
+					instanceFlag = true;
 					for(int i=0;i<InstanceBlocksNum;i++){
 						instanceImage[i]=null;
 					}
+					instanceImage[0] = BitmapFactory.decodeResource(r, R.drawable.ibswt);
+					instanceImage[0] = Bitmap.createScaledBitmap(instanceImage[0], (int)(instanceImage[0].getWidth()*BLOCK_SCALE), (int)(instanceImage[0].getHeight()*BLOCK_SCALE), false);
+					instanceImage[1] = BitmapFactory.decodeResource(r, R.drawable.irswt);
+					instanceImage[1] = Bitmap.createScaledBitmap(instanceImage[1], (int)(instanceImage[1].getWidth()*BLOCK_SCALE), (int)(instanceImage[1].getHeight()*BLOCK_SCALE), false);
+					instanceImage[2] = BitmapFactory.decodeResource(r, R.drawable.ilswt);
+					instanceImage[2] = Bitmap.createScaledBitmap(instanceImage[2], (int)(instanceImage[2].getWidth()*BLOCK_SCALE), (int)(instanceImage[2].getHeight()*BLOCK_SCALE), false);
 				}
 				else if(genre==3){//「くりかえし」
 					instanceFlag = true;
@@ -132,7 +138,7 @@ public class ProgrammingView extends View{
 					instanceImage[0] = Bitmap.createScaledBitmap(instanceImage[0], (int)(instanceImage[0].getWidth()*BLOCK_SCALE), (int)(instanceImage[0].getHeight()*BLOCK_SCALE), false);
 					instanceImage[1] = BitmapFactory.decodeResource(r, R.drawable.urswt);
 					instanceImage[1] = Bitmap.createScaledBitmap(instanceImage[1], (int)(instanceImage[1].getWidth()*BLOCK_SCALE), (int)(instanceImage[1].getHeight()*BLOCK_SCALE), false);
-					instanceImage[2] = BitmapFactory.decodeResource(r, R.drawable.urslt);
+					instanceImage[2] = BitmapFactory.decodeResource(r, R.drawable.ulswt);
 					instanceImage[2] = Bitmap.createScaledBitmap(instanceImage[2], (int)(instanceImage[2].getWidth()*BLOCK_SCALE), (int)(instanceImage[2].getHeight()*BLOCK_SCALE), false);
 				}
 				else{//その他の白い部分
