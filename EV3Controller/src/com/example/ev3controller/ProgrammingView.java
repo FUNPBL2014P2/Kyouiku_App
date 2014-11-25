@@ -52,15 +52,15 @@ public class ProgrammingView extends View{
 		paint.setStyle(Paint.Style.STROKE);
 		paint.setColor(Color.BLACK);
 		
-		float x = dispSize.x/5;
+		float x1 = dispSize.x/5;
 		float y = dispSize.y;
 		
 		//ジャンルエリアとインスタンスエリアの境界線
-		canvas.drawLine(x, 0, x, y, paint);
+		canvas.drawLine(x1, 0, x1, y, paint);
 		
 		//インスタンスエリアとワークスペースの境界線
-		x = dispSize.x / 5 * 2;
-		canvas.drawLine(x, 0, x, y, paint);
+		float x2 = x1;
+		canvas.drawLine(x2, 0, x2, y, paint);
 		
 		//ジャンルボタン
 		for(int i=0; i<3; i++){
