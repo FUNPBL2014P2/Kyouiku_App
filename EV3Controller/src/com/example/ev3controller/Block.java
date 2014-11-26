@@ -5,10 +5,10 @@ import android.graphics.Point;
 import android.view.MotionEvent;
 
 public class Block {
-	private int blockType;//ブロックの種類
-	private Point point = new Point();//画像左上の座標
-	private int height;//ブロックの高さ
-	private int width;//ブロックの幅
+	protected int blockType;//ブロックの種類
+	protected Point point = new Point();//画像左上の座標
+	protected int height;//ブロックの高さ
+	protected int width;//ブロックの幅
 
 	//コンストラクタ
 	public Block(int type, int x, int y, int Width, int Height){
