@@ -11,10 +11,18 @@ import android.graphics.Point;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.example.ev3controller.EV3ProgramCommand;
+
 public class ProgrammingView extends View{
-	int InstanceBlocksNum = 8;//インスタンスブロックの数
 	Bitmap genreImage[] = new Bitmap[3];//ブロックイメージの読み込み
+	int genreLineX;
+	
+	int InstanceBlocksNum = 19;//インスタンスブロックの数
 	Bitmap instanceImage[] = new Bitmap[InstanceBlocksNum];
+	Block insBlock[] = new Block[InstanceBlocksNum];
+	int insHead,insRange;
+	int instanceLineX;
+	
 	Bitmap startImage;
 	boolean instanceFlag = false;
 
@@ -44,6 +52,12 @@ public class ProgrammingView extends View{
 		startImage = Bitmap.createScaledBitmap(startImage, (int)(startImage.getWidth()*BLOCK_SCALE), (int)(startImage.getHeight()*BLOCK_SCALE), false);
 
 		maxHeight=0;
+		
+		insHead=0;
+		insRange=0;
+		
+		//インスタンスブロックの初期化
+		setInctanceBlock();
 	}
 
 	@Override
@@ -56,7 +70,7 @@ public class ProgrammingView extends View{
 		paint.setStyle(Paint.Style.STROKE);
 		paint.setColor(Color.BLACK);
 
-		float x1 = dispSize.x/5;
+		float x1 = genreLineX;
 		float y = dispSize.y;
 
 		//ジャンルエリアとインスタンスエリアの境界線
@@ -64,8 +78,9 @@ public class ProgrammingView extends View{
 
 		//インスタンスエリアとワークスペースの境界線
 		float x2 = x1;
-		if(instanceFlag == true)
-			x2 = x1 + instanceImage[0].getWidth() + 60;
+		if(instanceFlag == true){
+			x2 = x1 + instanceLineX + 60;
+		}
 		canvas.drawLine(x2, 0, x2, y, paint);
 
 		//ジャンルボタン
@@ -77,10 +92,10 @@ public class ProgrammingView extends View{
 		canvas.drawBitmap(startImage, x2+30, 25, null);
 
 		//インスタンスブロック
-		for(int i=0;i<InstanceBlocksNum;i++){
-			if(instanceImage[i]==null)
-				break;
-			canvas.drawBitmap(instanceImage[i], x1+25, 25+200*i, null);
+		if(insRange != 0){
+			for(int i=insHead; i<insHead+insRange; i++){
+				canvas.drawBitmap(instanceImage[i], insBlock[i].getPosition().x, insBlock[i].getPosition().y, paint);
+			}
 		}
 	}
 
@@ -91,64 +106,32 @@ public class ProgrammingView extends View{
 		int blocktype;
 		switch(action & MotionEvent.ACTION_MASK){
 		case MotionEvent.ACTION_DOWN:
-			if(event.getX() <= dispSize.x/5){//もしジャンルエリアをタッチされたら
-				Resources r = getResources();
+			if(event.getX() <= genreLineX){//もしジャンルエリアをタッチされたら
 				int genre = JudgeTouchGenreBlock(event.getX(), event.getY());
 				if(genre==1){//「うごき」
 					instanceFlag = true;
-					for(int i=0;i<InstanceBlocksNum;i++){
-						instanceImage[i]=null;
-					}
-					instanceImage[0] = BitmapFactory.decodeResource(r, R.drawable.go0block);
-					instanceImage[0] = Bitmap.createScaledBitmap(instanceImage[0], (int)(instanceImage[0].getWidth()*BLOCK_SCALE), (int)(instanceImage[0].getHeight()*BLOCK_SCALE), false);
-					instanceImage[1] = BitmapFactory.decodeResource(r, R.drawable.go1block);
-					instanceImage[1] = Bitmap.createScaledBitmap(instanceImage[1], (int)(instanceImage[1].getWidth()*BLOCK_SCALE), (int)(instanceImage[1].getHeight()*BLOCK_SCALE), false);
-					instanceImage[2] = BitmapFactory.decodeResource(r, R.drawable.go2block);
-					instanceImage[2] = Bitmap.createScaledBitmap(instanceImage[2], (int)(instanceImage[2].getWidth()*BLOCK_SCALE), (int)(instanceImage[2].getHeight()*BLOCK_SCALE), false);
-					instanceImage[3] = BitmapFactory.decodeResource(r, R.drawable.go3block);
-					instanceImage[3] = Bitmap.createScaledBitmap(instanceImage[3], (int)(instanceImage[3].getWidth()*BLOCK_SCALE), (int)(instanceImage[3].getHeight()*BLOCK_SCALE), false);
-					instanceImage[4] = BitmapFactory.decodeResource(r, R.drawable.go4block);
-					instanceImage[4] = Bitmap.createScaledBitmap(instanceImage[4], (int)(instanceImage[4].getWidth()*BLOCK_SCALE), (int)(instanceImage[4].getHeight()*BLOCK_SCALE), false);
-					instanceImage[5] = BitmapFactory.decodeResource(r, R.drawable.go5block);
-					instanceImage[5] = Bitmap.createScaledBitmap(instanceImage[5], (int)(instanceImage[5].getWidth()*BLOCK_SCALE), (int)(instanceImage[5].getHeight()*BLOCK_SCALE), false);
-					instanceImage[6] = BitmapFactory.decodeResource(r, R.drawable.go6block);
-					instanceImage[6] = Bitmap.createScaledBitmap(instanceImage[6], (int)(instanceImage[6].getWidth()*BLOCK_SCALE), (int)(instanceImage[6].getHeight()*BLOCK_SCALE), false);
-					instanceImage[7] = BitmapFactory.decodeResource(r, R.drawable.go7block);
-					instanceImage[7] = Bitmap.createScaledBitmap(instanceImage[7], (int)(instanceImage[7].getWidth()*BLOCK_SCALE), (int)(instanceImage[7].getHeight()*BLOCK_SCALE), false);
-
+					insHead=0;
+					insRange=8;
 				}
 				else if(genre==2){//「じょうけん」
 					instanceFlag = true;
-					for(int i=0;i<InstanceBlocksNum;i++){
-						instanceImage[i]=null;
-					}
-					instanceImage[0] = BitmapFactory.decodeResource(r, R.drawable.ibswt);
-					instanceImage[0] = Bitmap.createScaledBitmap(instanceImage[0], (int)(instanceImage[0].getWidth()*BLOCK_SCALE), (int)(instanceImage[0].getHeight()*BLOCK_SCALE), false);
-					instanceImage[1] = BitmapFactory.decodeResource(r, R.drawable.irswt);
-					instanceImage[1] = Bitmap.createScaledBitmap(instanceImage[1], (int)(instanceImage[1].getWidth()*BLOCK_SCALE), (int)(instanceImage[1].getHeight()*BLOCK_SCALE), false);
-					instanceImage[2] = BitmapFactory.decodeResource(r, R.drawable.ilswt);
-					instanceImage[2] = Bitmap.createScaledBitmap(instanceImage[2], (int)(instanceImage[2].getWidth()*BLOCK_SCALE), (int)(instanceImage[2].getHeight()*BLOCK_SCALE), false);
+					insHead=8;
+					insRange=5;
 				}
 				else if(genre==3){//「くりかえし」
 					instanceFlag = true;
-					for(int i=0;i<InstanceBlocksNum;i++){
-						instanceImage[i]=null;
-					}
-					instanceImage[0] = BitmapFactory.decodeResource(r, R.drawable.ubswt);
-					instanceImage[0] = Bitmap.createScaledBitmap(instanceImage[0], (int)(instanceImage[0].getWidth()*BLOCK_SCALE), (int)(instanceImage[0].getHeight()*BLOCK_SCALE), false);
-					instanceImage[1] = BitmapFactory.decodeResource(r, R.drawable.urswt);
-					instanceImage[1] = Bitmap.createScaledBitmap(instanceImage[1], (int)(instanceImage[1].getWidth()*BLOCK_SCALE), (int)(instanceImage[1].getHeight()*BLOCK_SCALE), false);
-					instanceImage[2] = BitmapFactory.decodeResource(r, R.drawable.ulswt);
-					instanceImage[2] = Bitmap.createScaledBitmap(instanceImage[2], (int)(instanceImage[2].getWidth()*BLOCK_SCALE), (int)(instanceImage[2].getHeight()*BLOCK_SCALE), false);
+					insHead=13;
+					insRange=6;
 				}
 				else{//その他の白い部分
 					instanceFlag=false;
-					for(int i=0;i<InstanceBlocksNum;i++){
-						instanceImage[i]=null;
-					}
+					insRange=0;
 				}
+				instanceLineX = getMaxInstanceBlockWidth();
+			}else if(genreLineX < event.getX() && event.getX() < instanceLineX){
+				
 			}
-
+			
 			invalidate();
 			break;
 		}
@@ -161,6 +144,10 @@ public class ProgrammingView extends View{
 			//Viewの画面サイズの取得
 			dispSize.x = width;
 			dispSize.y = height;
+			//ジャンルエリアの境界線のX座標
+			genreLineX = dispSize.x / 5;
+			//インスタンスブロックの初期化
+			setInctanceBlock();
 
 			invalidate();
 		}
@@ -178,4 +165,82 @@ public class ProgrammingView extends View{
 		return 0;
 	}
 
+	public void setInctanceBlock(){
+		Resources r = getResources();
+		int i;
+		
+		//動き 0~7
+		instanceImage[0] = BitmapFactory.decodeResource(r, R.drawable.go0block);
+		instanceImage[1] = BitmapFactory.decodeResource(r, R.drawable.go1block);
+		instanceImage[2] = BitmapFactory.decodeResource(r, R.drawable.go2block);
+		instanceImage[3] = BitmapFactory.decodeResource(r, R.drawable.go3block);
+		instanceImage[4] = BitmapFactory.decodeResource(r, R.drawable.go4block);
+		instanceImage[5] = BitmapFactory.decodeResource(r, R.drawable.go5block);
+		instanceImage[6] = BitmapFactory.decodeResource(r, R.drawable.go6block);
+		instanceImage[7] = BitmapFactory.decodeResource(r, R.drawable.go7block);
+		
+		//条件 8~12
+		instanceImage[8] = BitmapFactory.decodeResource(r, R.drawable.ibswt);
+		instanceImage[9] = BitmapFactory.decodeResource(r, R.drawable.irswt);
+		instanceImage[10] = BitmapFactory.decodeResource(r, R.drawable.ilswt);
+		instanceImage[11] = BitmapFactory.decodeResource(r, R.drawable.ilswt);//TODO あとで修正
+		instanceImage[12] = BitmapFactory.decodeResource(r, R.drawable.ilswt);//TODO あとで修正
+				
+		//繰り返し(for) 13,14
+		instanceImage[13] = BitmapFactory.decodeResource(r, R.drawable.ilswt);//TODO あとで修正
+		instanceImage[14] = BitmapFactory.decodeResource(r, R.drawable.ilswt);//TODO あとで修正
+		
+		//繰り返し(until) 15~18
+		instanceImage[15] = BitmapFactory.decodeResource(r, R.drawable.ubswt);
+		instanceImage[16] = BitmapFactory.decodeResource(r, R.drawable.urswt);
+		instanceImage[17] = BitmapFactory.decodeResource(r, R.drawable.ulswt);
+		instanceImage[18] = BitmapFactory.decodeResource(r, R.drawable.ulswt);//TODO あとで修正
+		
+		//画像の縮小
+		for(i=0; i<InstanceBlocksNum; i++){
+			instanceImage[i] = Bitmap.createScaledBitmap(instanceImage[i], (int)(instanceImage[i].getWidth()*BLOCK_SCALE), (int)(instanceImage[i].getHeight()*BLOCK_SCALE), false);
+		}
+		
+		//動き 0~7
+		i=0;
+		insBlock[0] = new Block(EV3ProgramCommand.FF, genreLineX+25, 25+200*i++, instanceImage[0]);
+		insBlock[1] = new Block(EV3ProgramCommand.FLF, genreLineX+25, 25+200*i++, instanceImage[1]);
+		insBlock[2] = new Block(EV3ProgramCommand.FB, genreLineX+25, 25+200*i++, instanceImage[2]);
+		insBlock[3] = new Block(EV3ProgramCommand.BLB, genreLineX+25, 25+200*i++, instanceImage[3]);
+		insBlock[4] = new Block(EV3ProgramCommand.BB, genreLineX+25, 25+200*i++, instanceImage[4]);
+		insBlock[5] = new Block(EV3ProgramCommand.LBB, genreLineX+25, 25+200*i++, instanceImage[5]);
+		insBlock[6] = new Block(EV3ProgramCommand.BF, genreLineX+25, 25+200*i++, instanceImage[6]);
+		insBlock[7] = new Block(EV3ProgramCommand.LFF, genreLineX+25, 25+200*i++, instanceImage[7]);
+		
+		//条件 8~12
+		i=0;
+		insBlock[8] = new Block(EV3ProgramCommand.IBSWT, genreLineX+25, 25+200*i++, instanceImage[8]);
+		insBlock[9] = new Block(EV3ProgramCommand.IRSWT, genreLineX+25, 25+200*i++, instanceImage[9]);
+		insBlock[10] = new Block(EV3ProgramCommand.ILSWT, genreLineX+25, 25+200*i++, instanceImage[10]);
+		insBlock[11] = new Block(EV3ProgramCommand.ELSE, genreLineX+25, 25+200*i++, instanceImage[11]);
+		insBlock[12] = new Block(EV3ProgramCommand.IEND, genreLineX+25, 25+200*i++, instanceImage[12]);
+		
+		//繰り返し(for) 13,14
+		i=0;
+		insBlock[13] = new Block(EV3ProgramCommand.FBASE, genreLineX+25, 25+200*i++, instanceImage[13]);
+		insBlock[14] = new Block(EV3ProgramCommand.FEND, genreLineX+25, 25+200*i++, instanceImage[14]);
+		
+		//繰り返し(until) 15~18
+		insBlock[15] = new Block(EV3ProgramCommand.UBSWT, genreLineX+25, 25+200*i++, instanceImage[15]);
+		insBlock[16] = new Block(EV3ProgramCommand.URSWT, genreLineX+25, 25+200*i++, instanceImage[16]);
+		insBlock[17] = new Block(EV3ProgramCommand.ULSWT, genreLineX+25, 25+200*i++, instanceImage[17]);
+		insBlock[18] = new Block(EV3ProgramCommand.UEND, genreLineX+25, 25+200*i++, instanceImage[18]);
+	}
+	
+	public int getMaxInstanceBlockWidth(){
+		int maxWidth;
+		
+		if(insRange == 0) return 0;
+		else maxWidth = insBlock[insHead].getWidth();
+		
+		for(int i=insHead; i<insHead+insRange; i++){
+			if(maxWidth < insBlock[i].getWidth()) maxWidth = insBlock[i].getWidth();
+		}
+		return maxWidth;
+	}
 }

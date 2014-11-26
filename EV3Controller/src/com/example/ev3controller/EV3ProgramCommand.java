@@ -18,14 +18,17 @@ public class EV3ProgramCommand {
 	public static int IRSWT = 11;
 	public static int ILSWT = 12;
 	public static int IBSWT = 13;
+	public static int IEND = 19;
 	
 	public static int FBASE = 100;
+	public static int FEND = 101;
 	public static int FMIN = 102;
 	public static int FMAX = 199;
 	
 	public static int URSWT = 21;
 	public static int ULSWT = 22;
 	public static int UBSWT = 23;
+	public static int UEND = 29;
 	
 	public static int END = 200;
 	
