@@ -70,18 +70,13 @@ public class ProgrammingView extends View{
 		paint.setStyle(Paint.Style.STROKE);
 		paint.setColor(Color.BLACK);
 
-		float x1 = genreLineX;
 		float y = dispSize.y;
 
 		//ジャンルエリアとインスタンスエリアの境界線
-		canvas.drawLine(x1, 0, x1, y, paint);
+		canvas.drawLine(genreLineX, 0, genreLineX, y, paint);
 
 		//インスタンスエリアとワークスペースの境界線
-		float x2 = x1;
-		if(instanceFlag == true){
-			x2 = x1 + instanceLineX + 60;
-		}
-		canvas.drawLine(x2, 0, x2, y, paint);
+		canvas.drawLine(instanceLineX, 0, instanceLineX, y, paint);
 
 		//ジャンルボタン
 		for(int i=0; i<3; i++){
@@ -89,7 +84,10 @@ public class ProgrammingView extends View{
 		}
 
 		//スタートボタン
-		canvas.drawBitmap(startImage, x2+30, 25, null);
+		int startx;
+		if(insRange==0) startx= genreLineX;
+		else startx = instanceLineX;
+		canvas.drawBitmap(startImage, startx+30, 25, null);
 
 		//インスタンスブロック
 		if(insRange != 0){
@@ -129,7 +127,10 @@ public class ProgrammingView extends View{
 				}
 				instanceLineX = getMaxInstanceBlockWidth();
 			}else if(genreLineX < event.getX() && event.getX() < instanceLineX){
-				
+				int blockType = JudgeTouchInstanceBlock(event);
+				if(blockType!=-1){
+					
+				}
 			}
 			
 			invalidate();
@@ -163,6 +164,16 @@ public class ProgrammingView extends View{
 		else if(25<x && x<genreImage[2].getWidth()+25 && 425<y && y<genreImage[2].getHeight()+425)
 			return 3;//「くりかえし」
 		return 0;
+	}
+	
+	public int JudgeTouchInstanceBlock(MotionEvent event){
+		for(int i=insHead; i<insHead+insRange; i++){
+			if(insBlock[i].isTouch(event) == true){
+				if(insBlock[i].getBlockType()==100) return EV3ProgramCommand.FMIN;//for文用
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	public void setInctanceBlock(){
@@ -241,6 +252,6 @@ public class ProgrammingView extends View{
 		for(int i=insHead; i<insHead+insRange; i++){
 			if(maxWidth < insBlock[i].getWidth()) maxWidth = insBlock[i].getWidth();
 		}
-		return maxWidth;
+		return genreLineX + maxWidth + 60;
 	}
 }
