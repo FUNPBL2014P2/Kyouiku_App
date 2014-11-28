@@ -23,6 +23,7 @@ public class ProgrammingActivity extends Activity {
 		
 		//メインビューの設定
 		programmingview = new ProgrammingView(this);
+		programmingview.setActivity(this);
 		setContentView(programmingview);
 		
 		//サブビュー(ボタンを配置するレイアウト)の設定
@@ -37,6 +38,11 @@ public class ProgrammingActivity extends Activity {
 		WindowManager wm = (WindowManager)getSystemService(WINDOW_SERVICE);
 		Display dp = wm.getDefaultDisplay();
 		programmingview.setDisplaySize(dp.getWidth(), dp.getHeight());
+	}
+	
+	public void onReturnValue(String string) {
+		String str[] = string.split(":");
+		if(str[0].equals("FORNUM")) programmingview.setForNum(Integer.valueOf(str[1]));
 	}
 
 }
