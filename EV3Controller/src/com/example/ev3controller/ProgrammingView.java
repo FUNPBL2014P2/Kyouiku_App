@@ -180,24 +180,24 @@ implements GestureDetector.OnGestureListener{
 				touchProgramBlockFlag = true;
 				int blockType = blockList.get(blockList.size()-1).getBlockType();
 				Point centor = getTouchBlockCentor(event, blockType);
-//				disconnectPrevBlock();
+				disconnectPrevBlock();
 				blockList.get(blockList.size()-1).setPosition(new Point(centor.x,centor.y));
 			}
 			invalidate();
 			break;
 		case MotionEvent.ACTION_MOVE:
 			if(touchProgramBlockFlag == true){//プログラミングブロックをドラックされたら
-//				int connectBlockNum = judAutoConnectBlock(event);
-//				if(connectBlockNum != -1){//もし他のブロックとの接続範囲に入ったら、接続する
-//					connectPrevBlock(connectBlockNum);
-//					Point prevBlockPosition = new Point(blockList.get(connectBlockNum).getPosition().x,
-//							blockList.get(connectBlockNum).getPosition().y + blockList.get(connectBlockNum).getHeight()-25);
-//					blockList.get(blockList.size()-1).setPosition(prevBlockPosition);
-//				}else{//違えば、ブロックはタッチされている位置になる
-//					disconnectPrevBlock();
+				int connectBlockNum = judAutoConnectBlock(event);
+				if(connectBlockNum != -1){//もし他のブロックとの接続範囲に入ったら、接続する
+					connectPrevBlock(connectBlockNum);
+					Point prevBlockPosition = new Point(blockList.get(connectBlockNum).getPosition().x,
+							blockList.get(connectBlockNum).getPosition().y + blockList.get(connectBlockNum).getHeight()-25);
+					blockList.get(blockList.size()-1).setPosition(prevBlockPosition);
+				}else{//違えば、ブロックはタッチされている位置になる
+					disconnectPrevBlock();
 					Point centorPosition = this.getTouchBlockCentor(event, blockList.get(blockList.size()-1).getBlockType());
 					blockList.get(blockList.size()-1).setPosition(new Point(centorPosition.x,centorPosition.y));
-//				}
+				}
 				//移動ブロックとつながっているブロックの座標の変更
 				for(ProgramBlock block = blockList.get(blockList.size()-1).getNextBlock(); block != null; block = block.getNextBlock()){
 					Point blocksize = getBlockSize(block.getBlockType());
@@ -417,7 +417,7 @@ implements GestureDetector.OnGestureListener{
 		Bitmap img = blockImage[getBlockImageIndex(blockType)];
 		return new Point(img.getWidth(), img.getHeight());
 	}
-/*	
+
 	//プログラミングブロックの接続判定と関連付けを行うメソッド
 	public int judAutoConnectBlock(MotionEvent event){
 		for(int i=blockList.size()-2; i>=0; i--){
@@ -445,7 +445,7 @@ implements GestureDetector.OnGestureListener{
 			blockList.get(blockList.size()-1).getPrevBlock().setNextBlock(null);
 		blockList.get(blockList.size()-1).setPrevBlock(null);
 	}
-*/	
+
 	//どのプログラムブロックにタッチしたかを判定し順番をソートするメソッド
 	public int judTouchProgramBlock(MotionEvent event){
 		for(int i=blockList.size()-1; i>=0; i--){
@@ -485,24 +485,7 @@ implements GestureDetector.OnGestureListener{
 				dialog.setForNum(blockList.get(blockList.size()-1));
 				dialog.show(activity.getFragmentManager(), "span_setting_dialog");
 			}
-		}/* else if(genreLineX < e.getX() && e.getX() < instanceLineX){//もしインスタンスブロックがタッチされたら
-			int blockType = JudgeTouchInstanceBlock(e);
-			if(blockType!=-1){
-				blockList.add(new ProgramBlock(blockType, getTouchBlockCentor(e,blockType),
-						blockImage[getBlockImageIndex(blockType)]));
-				touchProgramBlockFlag = true;
-				instanceFlag=false;
-				insRange=0;
-				int basePositionX = instanceLineX;
-				instanceLineX = getMaxInstanceBlockWidth();
-				for(int i=0; i<blockList.size()-1; i++){
-					ProgramBlock block = blockList.get(i);
-					Point position = new Point(block.getPosition().x + instanceLineX - basePositionX, block.getPosition().y);
-					block.setPosition(position);
-				}
-			}
 		}
-		*/
 	}
 
 	@Override
