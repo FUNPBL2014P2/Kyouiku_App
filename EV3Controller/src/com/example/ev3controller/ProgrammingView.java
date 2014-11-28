@@ -485,8 +485,24 @@ implements GestureDetector.OnGestureListener{
 				dialog.setForNum(blockList.get(blockList.size()-1));
 				dialog.show(activity.getFragmentManager(), "span_setting_dialog");
 			}
+		}/* else if(genreLineX < e.getX() && e.getX() < instanceLineX){//もしインスタンスブロックがタッチされたら
+			int blockType = JudgeTouchInstanceBlock(e);
+			if(blockType!=-1){
+				blockList.add(new ProgramBlock(blockType, getTouchBlockCentor(e,blockType),
+						blockImage[getBlockImageIndex(blockType)]));
+				touchProgramBlockFlag = true;
+				instanceFlag=false;
+				insRange=0;
+				int basePositionX = instanceLineX;
+				instanceLineX = getMaxInstanceBlockWidth();
+				for(int i=0; i<blockList.size()-1; i++){
+					ProgramBlock block = blockList.get(i);
+					Point position = new Point(block.getPosition().x + instanceLineX - basePositionX, block.getPosition().y);
+					block.setPosition(position);
+				}
+			}
 		}
-		System.out.println("hogehoge");
+		*/
 	}
 
 	@Override
