@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 
 public class ProgramBlock extends Block{
-	private Block next, prev;//接続されている前と後ろのブロック
+	private ProgramBlock next, prev;//接続されている前と後ろのブロック
 	
 	public ProgramBlock(int type, int x, int y, int Width, int Height) {
 		super(type, x, y, Width, Height);
@@ -38,22 +38,22 @@ public class ProgramBlock extends Block{
 	}
 
 	//繋がっている次のプログラミングブロックを設定する
-	public void setNextBlock(Block nextBlock){
+	public void setNextBlock(ProgramBlock nextBlock){
 		next = nextBlock;
 	}
 
 	//繋がっている前のプログラミングブロックを設定する
-	public void setPrevBlock(Block prevBlock){
+	public void setPrevBlock(ProgramBlock prevBlock){
 		prev = prevBlock;
 	}
 
 	//繋がっている次のプログラミングブロックを取得する
-	public Block getNextBlock(){
+	public ProgramBlock getNextBlock(){
 		return next;
 	}
 
 	//繋がっている前のプログラミングブロックを取得する
-	public Block getPrevBlock(){
+	public ProgramBlock getPrevBlock(){
 		return prev;
 	}
 }
