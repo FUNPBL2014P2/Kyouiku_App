@@ -517,7 +517,11 @@ implements GestureDetector.OnGestureListener{
 				//startBlock.setPosition(new Point(startx, startBlock.getPosition().y));
 			//}
 		}
-		
+		else if(JudgeTouchInstanceBlock(e1) == -1 && e1.getX() < instanceLineX && e1.getX()>genreLineX){//インスタンスエリアののスクロール処理
+			for(int i=0; i<insHead+insRange; i++){//縦スクロール
+				insBlock[i].setPosition(new Point(insBlock[i].getPosition().x, insBlock[i].getPosition().y - (int)distanceY));
+			}
+		}
 		invalidate();
 		return false;
 	}
