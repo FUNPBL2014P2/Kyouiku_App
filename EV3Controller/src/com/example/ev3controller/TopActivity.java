@@ -18,13 +18,16 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import ev3command.ev3.comm.AndroidComm;
 import ev3command.ev3.comm.EV3Command;
+import android.content.Intent;
+import android.app.Application;
 
 
 public class TopActivity extends Activity {
 
 	//TODO
-	private EV3 ev3;
+	public EV3Materials ev3mt; //globalなEV3Materials(blockとEV3を格納)
 	private Button mConnectButton;
+	private Button toRemoteButton;
 	private BluetoothAdapter mBtAdapter = null;
 
 	private static final int REQUEST_ENABLE_BT = 1;
@@ -37,8 +40,8 @@ public class TopActivity extends Activity {
 
 	StringBuffer[] Str = new StringBuffer[4];//センサ値
 
-	public ImageView[] arrows = new ImageView[8];
-	public ImageView[] blocks = new ImageView[4];
+	//public ImageView[] arrows = new ImageView[8];
+	
 
 	public boolean BTstate;
 	@Override
@@ -49,6 +52,7 @@ public class TopActivity extends Activity {
 		for(int i=0;i<4;i++){
 			Str[i] = new StringBuffer();
 		}
+		ev3mt = (EV3Materials)this.getApplication() ;
 		setContentView(R.layout.activity_top);
 		findViews();
 		mBtAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -58,6 +62,7 @@ public class TopActivity extends Activity {
 	private void findViews() {
 
 		mConnectButton = (Button) findViewById(R.id.bt_connect);
+		toRemoteButton = (Button) findViewById(R.id.toRemote);
 
 	}
 
@@ -66,6 +71,15 @@ public class TopActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				findEV3Device(); // Show the device list
+			}
+		});
+		toRemoteButton.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v) {
+				
+				Intent R_intent = new Intent(TopActivity.this,RemoteActivity.class);
+				R_intent.setClassName("com.example.ev3controller", "com.example.ev3controller.RemoteActivity");
+				startActivity(R_intent);
 			}
 		});
 	}
@@ -121,7 +135,7 @@ public class TopActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				//timer.cancel();
-				ev3.threadstop();
+				ev3mt.ev3.threadstop();
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
@@ -134,7 +148,7 @@ public class TopActivity extends Activity {
 		Toast.makeText(this, "EV3 Connected", Toast.LENGTH_SHORT).show();
 
 
-		ev3 = new EV3(blocks,Str);
+		ev3mt.ev3 = new EV3(ev3mt.blocks,Str);
 		for (int i = 0; i < 4; i++) {
 			//String name = mSensors[i].getName();
 			//Log.d("MainActivity", "Name: " + name);

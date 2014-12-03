@@ -16,7 +16,8 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme" 
+        android:name="EV3Materials" >
         <activity
             android:name="com.example.ev3controller.TopActivity"
             android:label="@string/app_name"
@@ -30,6 +31,11 @@
         <activity
             android:name="DeviceListActivity"
             android:theme="@android:style/Theme.Holo.Dialog" >
+        </activity>
+        <activity 
+            android:name="com.example.ev3controller.RemoteActivity"
+            android:screenOrientation="landscape">
+            
         </activity>
     </application>
 
