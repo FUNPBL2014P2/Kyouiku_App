@@ -21,28 +21,29 @@ public class ProgrammingView extends View
 implements GestureDetector.OnGestureListener{
 	Bitmap genreImage[] = new Bitmap[3];//ブロックイメージの読み込み
 	int genreLineX;
-	
+
 	int InstanceBlocksNum = 20;//インスタンスブロックの数
 	Bitmap blockImage[] = new Bitmap[InstanceBlocksNum];
 	Block insBlock[] = new Block[InstanceBlocksNum];
 	int insHead,insRange;
 	int instanceLineX;
-	
 	boolean instanceFlag = false;
-	
+
 	private List<ProgramBlock> blockList = new ArrayList<ProgramBlock>();//生成したブロックを格納する変数
 	private boolean touchProgramBlockFlag = false;//ブロックがタッチされている状態かを記憶する変数
 
 	private Point dispSize = new Point();//線を描写するのに必要な変数
 
-	private int maxHeight;//作業スペースの高さの最大
-	
+	private int maxHeight=0;//作業スペースの高さの最大
+	private int minHeight=0;//作業スペースの高さの最小
+	private int nowHeight=0;//現在の作業スペース
+
 	private ProgrammingActivity activity;//親アクティビティを格納する変数
 
 	private GestureDetector gestureDetector;//イベントからジェスチャーイベントを飛びたすクラス
-	
+
 	private static final double BLOCK_SCALE = 0.6;
-	
+
 	private ProgramBlock startBlock;
 
 	//コンストラクタ
@@ -51,7 +52,7 @@ implements GestureDetector.OnGestureListener{
 
 		//背景の色を設定
 		this.setBackgroundColor(Color.WHITE);
-		
+
 		//ジェスチャーディテクターの生成
 		gestureDetector = new GestureDetector(context, this);
 
@@ -60,15 +61,15 @@ implements GestureDetector.OnGestureListener{
 		genreImage[0] = BitmapFactory.decodeResource(r, R.drawable.movebutton);
 		genreImage[1] = BitmapFactory.decodeResource(r, R.drawable.ifbutton);
 		genreImage[2] = BitmapFactory.decodeResource(r, R.drawable.forbutton);
-		
+
 		maxHeight=0;
-		
+
 		insHead=0;
 		insRange=0;
-		
+
 		//インスタンスブロックの初期化
 		setInctanceBlock();
-		
+
 		//スタートブロックの追加
 		blockList.add(new ProgramBlock(EV3ProgramCommand.START, 30, 25, blockImage[getBlockImageIndex(EV3ProgramCommand.START)]));
 		startBlock = blockList.get(0);
@@ -109,7 +110,7 @@ implements GestureDetector.OnGestureListener{
 				canvas.drawBitmap(blockImage[i], insBlock[i].getPosition().x, insBlock[i].getPosition().y, paint);
 			}
 		}
-		
+
 		//TODO プロブラムブロックを表示
 		for(int i=0; i<blockList.size(); i++){
 			drawBlock(canvas, blockList.get(i));
@@ -127,7 +128,7 @@ implements GestureDetector.OnGestureListener{
 	public boolean onTouchEvent(MotionEvent event){
 		int action = event.getAction();
 		int blocktype;
-		
+
 		gestureDetector.onTouchEvent(event);
 		switch(action & MotionEvent.ACTION_MASK){
 		case MotionEvent.ACTION_DOWN:
@@ -229,6 +230,8 @@ implements GestureDetector.OnGestureListener{
 			dispSize.y = height;
 			//ジャンルエリアの境界線のX座標
 			genreLineX = dispSize.x / 5;
+			//ワークスペースの高さの最大
+			maxHeight = dispSize.y * 5;
 			//インスタンスブロックの初期化
 			setInctanceBlock();
 			//スタートブロックの位置の初期化
@@ -249,7 +252,7 @@ implements GestureDetector.OnGestureListener{
 			return 3;//「くりかえし」
 		return 0;
 	}
-	
+
 	public int JudgeTouchInstanceBlock(MotionEvent event){
 		for(int i=insHead; i<insHead+insRange; i++){
 			if(insBlock[i].isTouch(event) == true){
@@ -263,7 +266,7 @@ implements GestureDetector.OnGestureListener{
 	public void setInctanceBlock(){
 		Resources r = getResources();
 		int i;
-		
+
 		//動き 0~7
 		blockImage[0] = BitmapFactory.decodeResource(r, R.drawable.go0block);
 		blockImage[1] = BitmapFactory.decodeResource(r, R.drawable.go1block);
@@ -273,32 +276,32 @@ implements GestureDetector.OnGestureListener{
 		blockImage[5] = BitmapFactory.decodeResource(r, R.drawable.go5block);
 		blockImage[6] = BitmapFactory.decodeResource(r, R.drawable.go6block);
 		blockImage[7] = BitmapFactory.decodeResource(r, R.drawable.go7block);
-		
+
 		//条件 8~12
 		blockImage[8] = BitmapFactory.decodeResource(r, R.drawable.ibswt);
 		blockImage[9] = BitmapFactory.decodeResource(r, R.drawable.irswt);
 		blockImage[10] = BitmapFactory.decodeResource(r, R.drawable.ilswt);
 		blockImage[11] = BitmapFactory.decodeResource(r, R.drawable.ilswt);//TODO あとで修正
 		blockImage[12] = BitmapFactory.decodeResource(r, R.drawable.ilswt);//TODO あとで修正
-				
+
 		//繰り返し(for) 13,14
 		blockImage[13] = BitmapFactory.decodeResource(r, R.drawable.ilswt);//TODO あとで修正
 		blockImage[14] = BitmapFactory.decodeResource(r, R.drawable.ilswt);//TODO あとで修正
-		
+
 		//繰り返し(until) 15~18
 		blockImage[15] = BitmapFactory.decodeResource(r, R.drawable.ubswt);
 		blockImage[16] = BitmapFactory.decodeResource(r, R.drawable.urswt);
 		blockImage[17] = BitmapFactory.decodeResource(r, R.drawable.ulswt);
 		blockImage[18] = BitmapFactory.decodeResource(r, R.drawable.ulswt);//TODO あとで修正
-		
+
 		//スタート 19
 		blockImage[19] = BitmapFactory.decodeResource(r, R.drawable.start);
-		
+
 		//画像の縮小
 		for(i=0; i<InstanceBlocksNum; i++){
 			blockImage[i] = Bitmap.createScaledBitmap(blockImage[i], (int)(blockImage[i].getWidth()*BLOCK_SCALE), (int)(blockImage[i].getHeight()*BLOCK_SCALE), false);
 		}
-		
+
 		//動き 0~7
 		i=0;
 		insBlock[0] = new Block(EV3ProgramCommand.FF, genreLineX+25, 25+200*i++, blockImage[0]);
@@ -309,7 +312,7 @@ implements GestureDetector.OnGestureListener{
 		insBlock[5] = new Block(EV3ProgramCommand.LBB, genreLineX+25, 25+200*i++, blockImage[5]);
 		insBlock[6] = new Block(EV3ProgramCommand.BF, genreLineX+25, 25+200*i++, blockImage[6]);
 		insBlock[7] = new Block(EV3ProgramCommand.LFF, genreLineX+25, 25+200*i++, blockImage[7]);
-		
+
 		//条件 8~12
 		i=0;
 		insBlock[8] = new Block(EV3ProgramCommand.IBSWT, genreLineX+25, 25+200*i++, blockImage[8]);
@@ -317,31 +320,31 @@ implements GestureDetector.OnGestureListener{
 		insBlock[10] = new Block(EV3ProgramCommand.ILSWT, genreLineX+25, 25+200*i++, blockImage[10]);
 		insBlock[11] = new Block(EV3ProgramCommand.ELSE, genreLineX+25, 25+200*i++, blockImage[11]);
 		insBlock[12] = new Block(EV3ProgramCommand.IEND, genreLineX+25, 25+200*i++, blockImage[12]);
-		
+
 		//繰り返し(for) 13,14
 		i=0;
 		insBlock[13] = new Block(EV3ProgramCommand.FBASE, genreLineX+25, 25+200*i++, blockImage[13]);
 		insBlock[14] = new Block(EV3ProgramCommand.FEND, genreLineX+25, 25+200*i++, blockImage[14]);
-		
+
 		//繰り返し(until) 15~18
 		insBlock[15] = new Block(EV3ProgramCommand.UBSWT, genreLineX+25, 25+200*i++, blockImage[15]);
 		insBlock[16] = new Block(EV3ProgramCommand.URSWT, genreLineX+25, 25+200*i++, blockImage[16]);
 		insBlock[17] = new Block(EV3ProgramCommand.ULSWT, genreLineX+25, 25+200*i++, blockImage[17]);
 		insBlock[18] = new Block(EV3ProgramCommand.UEND, genreLineX+25, 25+200*i++, blockImage[18]);
 	}
-	
+
 	public int getMaxInstanceBlockWidth(){
 		int maxWidth;
-		
+
 		if(insRange == 0) return genreLineX;
 		else maxWidth = insBlock[insHead].getWidth();
-		
+
 		for(int i=insHead; i<insHead+insRange; i++){
 			if(maxWidth < insBlock[i].getWidth()) maxWidth = insBlock[i].getWidth();
 		}
 		return genreLineX + maxWidth + 60;
 	}
-	
+
 	public int getBlockImageIndex(int blockType){
 		int index = -1;
 		switch(blockType){
@@ -410,7 +413,7 @@ implements GestureDetector.OnGestureListener{
 		}
 		return index;
 	}
-	
+
 	//タッチされたプログラムブロックの中心を求めるためのメソッド
 	public Point getTouchBlockCentor(MotionEvent event, int blockType){
 		Point blockSize = getBlockSize(blockType);
@@ -418,7 +421,7 @@ implements GestureDetector.OnGestureListener{
 		int y = (int)event.getY() - (int)(blockSize.y / 2);
 		return new Point(x, y);
 	}
-	
+
 	//ブロックの表示寸法を得るためのメソッド
 	public Point getBlockSize(int blockType){
 		Bitmap img = blockImage[getBlockImageIndex(blockType)];
@@ -439,7 +442,7 @@ implements GestureDetector.OnGestureListener{
 		}
 		return -1;
 	}
-	
+
 	//タッチしているブロックの上にあるブロックと関係を繋げるメソッド
 	public void connectPrevBlock(int i){
 		blockList.get(i).setNextBlock(blockList.get(blockList.size()-1));
@@ -464,7 +467,7 @@ implements GestureDetector.OnGestureListener{
 		}
 		return -1;
 	}
-	
+
 	//プログラムブロックの表示の簡略化のためのメソッド
 	public void drawBlock(Canvas canvas, Block block){
 		canvas.drawBitmap(blockImage[getBlockImageIndex(block.getBlockType())], block.getPosition().x, block.getPosition().y, null);
@@ -499,13 +502,30 @@ implements GestureDetector.OnGestureListener{
 	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
 			float distanceY) {
 		// TODO 自動生成されたメソッド・スタブ
+		if(touchProgramBlockFlag == false && e1.getX() > instanceLineX){//ワークスペースのスクロール処理
+			if(nowHeight + (int)distanceY < 0){
+				distanceY = distanceY - (nowHeight + distanceY + minHeight);
+			}else if(maxHeight < nowHeight + (int)distanceY){
+				distanceY = distanceY - (nowHeight + distanceY - maxHeight);
+			}
+			nowHeight = nowHeight + (int)distanceY;
+			for(int i=0; i<blockList.size(); i++){//縦スクロール
+				blockList.get(i).setPosition(new Point(blockList.get(i).getPosition().x, blockList.get(i).getPosition().y - (int)distanceY));
+			}
+			//for(int i=0; i<blockList.size(); i++){//横スクロール
+				//blockList.get(i).setPosition(new Point(blockList.get(i).getPosition().x - (int)distanceX, blockList.get(i).getPosition().y));
+				//startBlock.setPosition(new Point(startx, startBlock.getPosition().y));
+			//}
+		}
+		
+		invalidate();
 		return false;
 	}
 
 	@Override
 	public void onShowPress(MotionEvent e) {
 		// TODO 自動生成されたメソッド・スタブ
-		
+
 	}
 
 	@Override
@@ -513,13 +533,13 @@ implements GestureDetector.OnGestureListener{
 		// TODO 自動生成されたメソッド・スタブ
 		return false;
 	}
-	
+
 	//Forブロックの繰り返す回数を設定する
 	public void setForNum(Integer value) {
 		blockList.get(blockList.size()-1).setBlockType(value.intValue() + EV3ProgramCommand.FBASE);
 		invalidate();
 	}
-	
+
 	public void setActivity(ProgrammingActivity mainactivity){
 		activity = mainactivity;
 	}
