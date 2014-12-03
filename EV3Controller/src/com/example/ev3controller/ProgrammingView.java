@@ -22,13 +22,12 @@ implements GestureDetector.OnGestureListener{
 	Bitmap genreImage[] = new Bitmap[3];//ブロックイメージの読み込み
 	int genreLineX;
 	
-	int InstanceBlocksNum = 19;//インスタンスブロックの数
+	int InstanceBlocksNum = 20;//インスタンスブロックの数
 	Bitmap blockImage[] = new Bitmap[InstanceBlocksNum];
 	Block insBlock[] = new Block[InstanceBlocksNum];
 	int insHead,insRange;
 	int instanceLineX;
 	
-	Bitmap startImage;
 	boolean instanceFlag = false;
 	
 	private List<ProgramBlock> blockList = new ArrayList<ProgramBlock>();//生成したブロックを格納する変数
@@ -43,6 +42,8 @@ implements GestureDetector.OnGestureListener{
 	private GestureDetector gestureDetector;//イベントからジェスチャーイベントを飛びたすクラス
 	
 	private static final double BLOCK_SCALE = 0.6;
+	
+	private ProgramBlock startBlock;
 
 	//コンストラクタ
 	public ProgrammingView(Context context){
@@ -59,13 +60,7 @@ implements GestureDetector.OnGestureListener{
 		genreImage[0] = BitmapFactory.decodeResource(r, R.drawable.movebutton);
 		genreImage[1] = BitmapFactory.decodeResource(r, R.drawable.ifbutton);
 		genreImage[2] = BitmapFactory.decodeResource(r, R.drawable.forbutton);
-
-		//スタートブロックの画像の設定
-		r = context.getResources();
-		startImage = BitmapFactory.decodeResource(r, R.drawable.start);
-
-		startImage = Bitmap.createScaledBitmap(startImage, (int)(startImage.getWidth()*BLOCK_SCALE), (int)(startImage.getHeight()*BLOCK_SCALE), false);
-
+		
 		maxHeight=0;
 		
 		insHead=0;
@@ -73,6 +68,10 @@ implements GestureDetector.OnGestureListener{
 		
 		//インスタンスブロックの初期化
 		setInctanceBlock();
+		
+		//スタートブロックの追加
+		blockList.add(new ProgramBlock(EV3ProgramCommand.START, 30, 25, blockImage[getBlockImageIndex(EV3ProgramCommand.START)]));
+		startBlock = blockList.get(0);
 	}
 
 	@Override
@@ -98,11 +97,11 @@ implements GestureDetector.OnGestureListener{
 			canvas.drawBitmap(genreImage[i], 25, 25+200*i, null);
 		}
 
-		//スタートボタン
+		//スタートブロックの座標の修正
 		int startx;
 		if(insRange==0) startx= genreLineX;
 		else startx = instanceLineX;
-		canvas.drawBitmap(startImage, startx+30, 25, null);
+		startBlock.setPosition(new Point(startx+30, startBlock.getPosition().y));
 
 		//インスタンスブロック
 		if(insRange != 0){
@@ -180,27 +179,27 @@ implements GestureDetector.OnGestureListener{
 				touchProgramBlockFlag = true;
 				int blockType = blockList.get(blockList.size()-1).getBlockType();
 				Point centor = getTouchBlockCentor(event, blockType);
-//				disconnectPrevBlock();
+				disconnectPrevBlock();
 				blockList.get(blockList.size()-1).setPosition(new Point(centor.x,centor.y));
 			}
 			invalidate();
 			break;
 		case MotionEvent.ACTION_MOVE:
 			if(touchProgramBlockFlag == true){//プログラミングブロックをドラックされたら
-//				int connectBlockNum = judAutoConnectBlock(event);
-//				if(connectBlockNum != -1){//もし他のブロックとの接続範囲に入ったら、接続する
-//					connectPrevBlock(connectBlockNum);
-//					Point prevBlockPosition = new Point(blockList.get(connectBlockNum).getPosition().x,
-//							blockList.get(connectBlockNum).getPosition().y + blockList.get(connectBlockNum).getHeight()-25);
-//					blockList.get(blockList.size()-1).setPosition(prevBlockPosition);
-//				}else{//違えば、ブロックはタッチされている位置になる
-//					disconnectPrevBlock();
+				int connectBlockNum = judAutoConnectBlock(event);
+				if(connectBlockNum != -1){//もし他のブロックとの接続範囲に入ったら、接続する
+					connectPrevBlock(connectBlockNum);
+					Point prevBlockPosition = new Point(blockList.get(connectBlockNum).getPosition().x,
+							blockList.get(connectBlockNum).getPosition().y + blockList.get(connectBlockNum).getHeight()-25);
+					blockList.get(blockList.size()-1).setPosition(prevBlockPosition);
+				}else{//違えば、ブロックはタッチされている位置になる
+					disconnectPrevBlock();
 					Point centorPosition = this.getTouchBlockCentor(event, blockList.get(blockList.size()-1).getBlockType());
 					blockList.get(blockList.size()-1).setPosition(new Point(centorPosition.x,centorPosition.y));
-//				}
+				}
 				//移動ブロックとつながっているブロックの座標の変更
 				for(ProgramBlock block = blockList.get(blockList.size()-1).getNextBlock(); block != null; block = block.getNextBlock()){
-					Point blocksize = getBlockSize(block.getBlockType());
+					Point blocksize = getBlockSize(block.getPrevBlock().getBlockType());
 					block.setPosition(new Point(block.getPrevBlock().getPosition().x, block.getPrevBlock().getPosition().y + blocksize.y-25));
 				}
 			}
@@ -232,6 +231,8 @@ implements GestureDetector.OnGestureListener{
 			genreLineX = dispSize.x / 5;
 			//インスタンスブロックの初期化
 			setInctanceBlock();
+			//スタートブロックの位置の初期化
+			startBlock.setPosition(new Point(genreLineX + 60, 25));
 
 			invalidate();
 		}
@@ -289,6 +290,9 @@ implements GestureDetector.OnGestureListener{
 		blockImage[16] = BitmapFactory.decodeResource(r, R.drawable.urswt);
 		blockImage[17] = BitmapFactory.decodeResource(r, R.drawable.ulswt);
 		blockImage[18] = BitmapFactory.decodeResource(r, R.drawable.ulswt);//TODO あとで修正
+		
+		//スタート 19
+		blockImage[19] = BitmapFactory.decodeResource(r, R.drawable.start);
 		
 		//画像の縮小
 		for(i=0; i<InstanceBlocksNum; i++){
@@ -395,6 +399,9 @@ implements GestureDetector.OnGestureListener{
 		case EV3ProgramCommand.UEND:
 			index=18;
 			break;
+		case EV3ProgramCommand.START:
+			index=19;
+			break;
 		default:
 			if(EV3ProgramCommand.FMIN <= blockType && blockType <= EV3ProgramCommand.FMAX){
 				index=13;
@@ -417,7 +424,7 @@ implements GestureDetector.OnGestureListener{
 		Bitmap img = blockImage[getBlockImageIndex(blockType)];
 		return new Point(img.getWidth(), img.getHeight());
 	}
-/*	
+
 	//プログラミングブロックの接続判定と関連付けを行うメソッド
 	public int judAutoConnectBlock(MotionEvent event){
 		for(int i=blockList.size()-2; i>=0; i--){
@@ -445,11 +452,11 @@ implements GestureDetector.OnGestureListener{
 			blockList.get(blockList.size()-1).getPrevBlock().setNextBlock(null);
 		blockList.get(blockList.size()-1).setPrevBlock(null);
 	}
-*/	
+
 	//どのプログラムブロックにタッチしたかを判定し順番をソートするメソッド
 	public int judTouchProgramBlock(MotionEvent event){
 		for(int i=blockList.size()-1; i>=0; i--){
-			if(blockList.get(i).isTouch(event)){
+			if(blockList.get(i).isTouch(event) && blockList.get(i).getBlockType() != EV3ProgramCommand.START){
 				blockList.add(blockList.get(i));
 				blockList.remove(i);
 				return blockList.size()-1;
@@ -485,24 +492,7 @@ implements GestureDetector.OnGestureListener{
 				dialog.setForNum(blockList.get(blockList.size()-1));
 				dialog.show(activity.getFragmentManager(), "span_setting_dialog");
 			}
-		}/* else if(genreLineX < e.getX() && e.getX() < instanceLineX){//もしインスタンスブロックがタッチされたら
-			int blockType = JudgeTouchInstanceBlock(e);
-			if(blockType!=-1){
-				blockList.add(new ProgramBlock(blockType, getTouchBlockCentor(e,blockType),
-						blockImage[getBlockImageIndex(blockType)]));
-				touchProgramBlockFlag = true;
-				instanceFlag=false;
-				insRange=0;
-				int basePositionX = instanceLineX;
-				instanceLineX = getMaxInstanceBlockWidth();
-				for(int i=0; i<blockList.size()-1; i++){
-					ProgramBlock block = blockList.get(i);
-					Point position = new Point(block.getPosition().x + instanceLineX - basePositionX, block.getPosition().y);
-					block.setPosition(position);
-				}
-			}
 		}
-		*/
 	}
 
 	@Override
