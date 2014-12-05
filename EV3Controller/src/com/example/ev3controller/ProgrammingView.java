@@ -134,7 +134,7 @@ implements GestureDetector.OnGestureListener{
 		if(nowInstanceHeight == minInstanceHeight)
 			canvas.drawLine(genreLineX, 0, instanceLineX, 0, paint);
 		else if(nowInstanceHeight == maxInstanceHeight)
-			canvas.drawLine(genreLineX, dispSize.y, instanceLineX, dispSize.y, paint);
+			canvas.drawLine(genreLineX, dispSize.y-165, instanceLineX, dispSize.y-165, paint);
 
 		//ジャンルボタン
 		for(int i=0; i<3; i++){
@@ -178,16 +178,22 @@ implements GestureDetector.OnGestureListener{
 			if(event.getX() <= genreLineX){//もしジャンルエリアをタッチされたら
 				int genre = JudgeTouchGenreBlock(event.getX(), event.getY());
 				if(genre==1){//「うごき」
+					nowInstanceHeight=0;
+					setInctanceBlock();
 					instanceFlag = true;
 					insHead=0;
 					insRange=8;
 				}
 				else if(genre==2){//「じょうけん」
+					nowInstanceHeight=0;
+					setInctanceBlock();
 					instanceFlag = true;
 					insHead=8;
 					insRange=5;
 				}
 				else if(genre==3){//「くりかえし」
+					nowInstanceHeight=0;
+					setInctanceBlock();
 					instanceFlag = true;
 					insHead=13;
 					insRange=6;
@@ -267,6 +273,7 @@ implements GestureDetector.OnGestureListener{
 
 	//View生成時にViewの大きさを設定するためのメソッド
 	public void setDisplaySize(int width, int height){
+		if(maxHeight==0){
 		//Viewの画面サイズの取得
 		dispSize.x = width;
 		dispSize.y = height;
@@ -290,6 +297,7 @@ implements GestureDetector.OnGestureListener{
 		startBlock.setPosition(new Point(genreLineX + 60, 25));
 
 		invalidate();
+		}
 
 	}
 
@@ -394,7 +402,7 @@ implements GestureDetector.OnGestureListener{
 		for(int i=insHead; i<insHead+insRange; i++){
 			if(maxWidth < insBlock[i].getWidth()) maxWidth = insBlock[i].getWidth();
 		}
-		return genreLineX + maxWidth + 60;
+		return genreLineX + maxWidth + 130;
 	}
 
 	public int getBlockImageIndex(int blockType){
