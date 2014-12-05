@@ -136,6 +136,7 @@ public class TopActivity extends Activity {
 			public void onClick(View v) {
 				//timer.cancel();
 				ev3mt.ev3.threadstop();
+				ev3mt.setThreadstatus(0);
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
