@@ -28,6 +28,7 @@ public class TopActivity extends Activity {
 	public EV3Materials ev3mt; //globalなEV3Materials(blockとEV3を格納)
 	private Button mConnectButton;
 	private Button toRemoteButton;
+	private Button toProgrammingButton;
 	private BluetoothAdapter mBtAdapter = null;
 
 	private static final int REQUEST_ENABLE_BT = 1;
@@ -56,6 +57,10 @@ public class TopActivity extends Activity {
 		setContentView(R.layout.activity_top);
 		findViews();
 		mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+		
+		toRemoteButton.setEnabled(false);
+		toProgrammingButton.setEnabled(false);
+		
 		setUpButtons();
 	}
 
@@ -63,7 +68,7 @@ public class TopActivity extends Activity {
 
 		mConnectButton = (Button) findViewById(R.id.bt_connect);
 		toRemoteButton = (Button) findViewById(R.id.toRemote);
-
+		toProgrammingButton = (Button) findViewById(R.id.toProgramming);
 	}
 
 	private void setUpButtons() {
@@ -80,6 +85,16 @@ public class TopActivity extends Activity {
 				Intent R_intent = new Intent(TopActivity.this,RemoteActivity.class);
 				R_intent.setClassName("com.example.ev3controller", "com.example.ev3controller.RemoteActivity");
 				startActivity(R_intent);
+			}
+		});
+		//TODO
+		toProgrammingButton.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v) {
+				
+				Intent P_intent = new Intent(TopActivity.this,ProgrammingActivity.class);
+				P_intent.setClassName("com.example.ev3controller", "com.example.ev3controller.ProgrammingActivity");
+				startActivity(P_intent);
 			}
 		});
 	}
@@ -130,6 +145,8 @@ public class TopActivity extends Activity {
 	}
 
 	private void connected() {
+		toRemoteButton.setEnabled(true);
+		toProgrammingButton.setEnabled(true);
 		mConnectButton.setText("Disconnect");
 		mConnectButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -156,6 +173,7 @@ public class TopActivity extends Activity {
 		}
 		
 		BTstate=true;
+		
 	}
 
 	private void disconnect() {
@@ -165,7 +183,8 @@ public class TopActivity extends Activity {
 		}
 		catch (RuntimeException e) {
 		}
-
+		toRemoteButton.setEnabled(false);
+		toProgrammingButton.setEnabled(false);
 		mConnectButton.setText("Connect");
 		mConnectButton.setOnClickListener(new OnClickListener() {
 			@Override
