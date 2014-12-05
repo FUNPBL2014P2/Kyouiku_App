@@ -41,9 +41,9 @@ implements GestureDetector.OnGestureListener{
 	private int maxInstanceHeight=0;//インスタンスエリアの高さの最大
 	private int minInstanceHeight=0;//インスタンスエリアの高さの最小
 	private int nowInstanceHeight=0;//現在のインスタンスエリア
-	private int leftWorkX;//作業スペースの左端
-	private int nowWorkX;//現在の作業スペースのX座標
-	private int rightWorkX;
+	private int leftWorkX=0;//作業スペースの左端
+	private int nowWorkX=0;//現在の作業スペースのX座標
+	private int rightWorkX=0;
 	private ProgrammingActivity activity;//親アクティビティを格納する変数
 
 	private GestureDetector gestureDetector;//イベントからジェスチャーイベントを飛びたすクラス
@@ -101,27 +101,40 @@ implements GestureDetector.OnGestureListener{
 		canvas.drawLine(instanceLineX, 0, instanceLineX, y, paint);
 
 		//作業スペースの上限、下限
-		paint.setStrokeWidth(20.0f);
+		paint.setStrokeWidth(10.0f);
 		paint.setStyle(Paint.Style.STROKE);
 		paint.setColor(Color.RED);
+		System.out.println("minHeight="+minHeight);
+		System.out.println("nowHeight="+nowHeight);
+		System.out.println("maxHeight="+maxHeight);
 		if(nowHeight == minHeight)
-			canvas.drawLine(instanceLineX, 0, dispSize.x, 0, paint);
-		else if(nowHeight == maxHeight) canvas.drawLine(instanceLineX, dispSize.y-30, dispSize.x, dispSize.y-30, paint);
+			canvas.drawLine(instanceLineX, 5, dispSize.x, 5, paint);
+		else if(nowHeight == maxHeight){
+			System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaadispSize.y="+dispSize.y);
+			canvas.drawLine(instanceLineX, dispSize.y-165, dispSize.x, dispSize.y-165, paint);
+		}
+
 
 		//作業スペースの左端
-		//if(nowWorkX == leftWorkX)
-			//canvas.drawLine(leftWorkX, 0, leftWorkX, dispSize.y, paint);
-		//else if(nowHeight == maxHeight)
-		//	canvas.drawLine(rightWorkX, 0, rightWorkX, dispSize.y, paint);
+		System.out.println("leftWorkX="+leftWorkX);
+		System.out.println("nowWorkX="+nowWorkX);
+		System.out.println("rightWorkX="+rightWorkX);
+		if(nowWorkX == leftWorkX)
+			canvas.drawLine(instanceLineX, 0, instanceLineX, dispSize.y, paint);
+		else if(nowWorkX == rightWorkX)
+			canvas.drawLine(dispSize.x-5, 0, dispSize.x-5, dispSize.y, paint);
 
 		//インスタンスエリアの上限、下限
+		System.out.println("minInstanceHeight="+minInstanceHeight);
+		System.out.println("nowInstanceHeight="+nowInstanceHeight);
+		System.out.println("maxInstanceHeight="+maxInstanceHeight);
 		paint.setStrokeWidth(20.0f);
 		paint.setStyle(Paint.Style.STROKE);
 		paint.setColor(Color.GREEN);
 		if(nowInstanceHeight == minInstanceHeight)
 			canvas.drawLine(genreLineX, 0, instanceLineX, 0, paint);
 		else if(nowInstanceHeight == maxInstanceHeight)
-			canvas.drawLine(genreLineX, dispSize.y-30, instanceLineX, dispSize.y-30, paint);
+			canvas.drawLine(genreLineX, dispSize.y, instanceLineX, dispSize.y, paint);
 
 		//ジャンルボタン
 		for(int i=0; i<3; i++){
@@ -268,7 +281,7 @@ implements GestureDetector.OnGestureListener{
 		//作業スペースの左端
 		leftWorkX = instanceLineX;
 		//現在の作業エリアのx座標
-		nowWorkX  = leftWorkX;
+		nowWorkX  = instanceLineX;
 		//作業スペースの右端
 		rightWorkX = dispSize.x * 3;
 		//インスタンスブロックの初期化
@@ -547,14 +560,21 @@ implements GestureDetector.OnGestureListener{
 			}else if(maxHeight < nowHeight + (int)distanceY){
 				distanceY = distanceY - (nowHeight + distanceY - maxHeight);
 			}
+			if(nowWorkX + (int)distanceX < leftWorkX){
+				System.out.println("nowWorkX + (int)distanceX < 0");
+				distanceX = distanceX - (nowWorkX + distanceX - leftWorkX);
+			}else if(rightWorkX < nowWorkX + (int)distanceX){
+				System.out.println("rightWorkX < nowWorkX + (int)distanceX");
+				distanceX = distanceX - (nowWorkX + distanceX - rightWorkX);
+			}
 			nowHeight = nowHeight + (int)distanceY;
+			nowWorkX = nowWorkX + (int)distanceX;
 			for(int i=0; i<blockList.size(); i++){//縦スクロール
 				blockList.get(i).setPosition(new Point(blockList.get(i).getPosition().x, blockList.get(i).getPosition().y - (int)distanceY));
 			}
 			for(int i=0; i<blockList.size(); i++){//横スクロール
 				blockList.get(i).setPosition(new Point(blockList.get(i).getPosition().x - (int)distanceX, blockList.get(i).getPosition().y));
 			}
-			leftWorkX = leftWorkX - (int)distanceX;
 		}
 		else if(JudgeTouchInstanceBlock(e1) == -1 && e1.getX() < instanceLineX && e1.getX()>genreLineX){//インスタンスエリアのスクロール処理
 			if(nowInstanceHeight + (int)distanceY < 0){
