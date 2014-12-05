@@ -116,10 +116,11 @@ implements GestureDetector.OnGestureListener{
 		for(int i=0; i<blockList.size(); i++){
 			drawBlock(canvas, blockList.get(i));
 			if(EV3ProgramCommand.FMIN <= blockList.get(i).getBlockType() && blockList.get(i).getBlockType() <= EV3ProgramCommand.FMAX){
-				paint.setTextSize(24);
+				paint.setTextSize(48);
 				paint.setStyle(Paint.Style.FILL);
 				paint.setColor(Color.BLACK);
-				canvas.drawText((blockList.get(i).getBlockType() - EV3ProgramCommand.FBASE)+"回繰り返す", blockList.get(i).getPosition().x + blockList.get(i).getIndentLevel() * indentWidth + 10, blockList.get(i).getPosition().y + 40, paint);
+				canvas.drawText(Integer.toString(blockList.get(i).getBlockType() - EV3ProgramCommand.FBASE),
+						blockList.get(i).getPosition().x + blockList.get(i).getIndentLevel() * indentWidth + 100, blockList.get(i).getPosition().y + 85, paint);
 			}
 		}
 	}
@@ -192,7 +193,7 @@ implements GestureDetector.OnGestureListener{
 				if(connectBlockNum != -1){//もし他のブロックとの接続範囲に入ったら、接続する
 					connectPrevBlock(connectBlockNum);
 					Point prevBlockPosition = new Point(blockList.get(connectBlockNum).getPosition().x,
-							blockList.get(connectBlockNum).getPosition().y + blockList.get(connectBlockNum).getHeight()-25);
+							blockList.get(connectBlockNum).getPosition().y + blockList.get(connectBlockNum).getHeight()-38);
 					blockList.get(blockList.size()-1).setPosition(prevBlockPosition);
 				}else{//違えば、ブロックはタッチされている位置になる
 					disconnectPrevBlock();
@@ -202,7 +203,7 @@ implements GestureDetector.OnGestureListener{
 				//移動ブロックとつながっているブロックの座標の変更
 				for(ProgramBlock block = blockList.get(blockList.size()-1).getNextBlock(); block != null; block = block.getNextBlock()){
 					Point blocksize = getBlockSize(block.getPrevBlock().getBlockType());
-					block.setPosition(new Point(block.getPrevBlock().getPosition().x, block.getPrevBlock().getPosition().y + blocksize.y-25));
+					block.setPosition(new Point(block.getPrevBlock().getPosition().x, block.getPrevBlock().getPosition().y + blocksize.y-38));
 				}
 			}
 			invalidate();
@@ -282,18 +283,18 @@ implements GestureDetector.OnGestureListener{
 		blockImage[8] = BitmapFactory.decodeResource(r, R.drawable.ibswt);
 		blockImage[9] = BitmapFactory.decodeResource(r, R.drawable.irswt);
 		blockImage[10] = BitmapFactory.decodeResource(r, R.drawable.ilswt);
-		blockImage[11] = BitmapFactory.decodeResource(r, R.drawable.ilswt);//TODO あとで修正
-		blockImage[12] = BitmapFactory.decodeResource(r, R.drawable.ilswt);//TODO あとで修正
+		blockImage[11] = BitmapFactory.decodeResource(r, R.drawable.ielse);
+		blockImage[12] = BitmapFactory.decodeResource(r, R.drawable.iend);
 				
 		//繰り返し(for) 13,14
-		blockImage[13] = BitmapFactory.decodeResource(r, R.drawable.ilswt);//TODO あとで修正
-		blockImage[14] = BitmapFactory.decodeResource(r, R.drawable.ilswt);//TODO あとで修正
+		blockImage[13] = BitmapFactory.decodeResource(r, R.drawable.ffor);
+		blockImage[14] = BitmapFactory.decodeResource(r, R.drawable.uend);
 		
 		//繰り返し(until) 15~18
 		blockImage[15] = BitmapFactory.decodeResource(r, R.drawable.ubswt);
 		blockImage[16] = BitmapFactory.decodeResource(r, R.drawable.urswt);
 		blockImage[17] = BitmapFactory.decodeResource(r, R.drawable.ulswt);
-		blockImage[18] = BitmapFactory.decodeResource(r, R.drawable.ulswt);//TODO あとで修正
+		blockImage[18] = BitmapFactory.decodeResource(r, R.drawable.uend);
 		
 		//スタート 19
 		blockImage[19] = BitmapFactory.decodeResource(r, R.drawable.start);
@@ -303,7 +304,8 @@ implements GestureDetector.OnGestureListener{
 			blockImage[i] = Bitmap.createScaledBitmap(blockImage[i], (int)(blockImage[i].getWidth()*BLOCK_SCALE), (int)(blockImage[i].getHeight()*BLOCK_SCALE), false);
 		}
 		
-		indentWidth = blockImage[getBlockImageIndex(EV3ProgramCommand.FF)].getWidth() / 4;
+		indentWidth = blockImage[getBlockImageIndex(EV3ProgramCommand.FF)].getWidth() / 4
+				- blockImage[getBlockImageIndex(EV3ProgramCommand.FF)].getWidth() / 20;
 		
 		//動き 0~7
 		i=0;
