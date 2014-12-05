@@ -7,6 +7,7 @@ import ev3command.ev3.UnidentifiedSensor;
 import ev3command.ev3.comm.EV3Command;
 
 public class EV3 {
+	public EV3Materials ev3mt;
 	private UnidentifiedSensor[] mSensors = new UnidentifiedSensor[4];
 	private Motor[] mMotors = new Motor[4];
 	Thread thread;
@@ -27,7 +28,7 @@ public class EV3 {
 		//timer.schedule(wSensor, 0,1);
 		System.out.println("スレッド");
 		thread = new Thread(wSensor);
-		thread.start();
+		//thread.start();
 
 	}
 
@@ -45,6 +46,10 @@ public class EV3 {
 			return true;
 	}
 
+	public void threadstart(){
+			thread.start();
+	}
+	
 	public void threadstop(){
 		thread.interrupt();
 	}
