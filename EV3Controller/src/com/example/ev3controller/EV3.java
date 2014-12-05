@@ -27,7 +27,7 @@ public class EV3 {
 		//timer.schedule(wSensor, 0,1);
 		System.out.println("スレッド");
 		thread = new Thread(wSensor);
-		thread.start();
+		//thread.start();
 
 	}
 
@@ -45,6 +45,10 @@ public class EV3 {
 			return true;
 	}
 
+	public void threadstart(){
+		thread.start();
+	}
+	
 	public void threadstop(){
 		thread.interrupt();
 	}

@@ -60,7 +60,7 @@ public class WatchingSensor extends Thread{
 			else{
 				//TODO
 				//ブロックのビューが使えるようになったらこのコメントアウトを消す
-				//blocks[index].setImageResource(R.drawable.grayblock);
+				blocks[index].setImageResource(R.drawable.grayblock);
 				sb[index].delete(0, sb[index].length()-1);
 			}
 		}

@@ -37,7 +37,7 @@ public class RemoteActivity extends Activity {
 		for(int i=0;i<8;i++){
 			setUpViews(arrows[i], i);
 		}
-
+		ev3mt.ev3.threadstart();
 		
 	}
 
