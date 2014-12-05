@@ -11,22 +11,33 @@
     tools:context=".TopActivity" >
 
     <Button
-        android:id="@+id/bt.connect"
+        android:id="@+id/toProgramming"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="157dp"
-        android:layout_marginTop="28dp"
-        android:text="ぶるーとぅーすせつぞく" />
+        android:layout_above="@+id/bt.connect"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="131dp"
+        android:layout_marginLeft="48dp"
+        android:text="プログラミング" />
 
     <Button
         android:id="@+id/toRemote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/bt.connect"
+        android:layout_alignBaseline="@+id/toProgramming"
+        android:layout_alignBottom="@+id/toProgramming"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="169dp"
+        android:text="ラジコン" />
+
+    <Button
+        android:id="@+id/bt.connect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/toRemote"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="77dp"
-        android:text="らじこん" />
+        android:layout_marginBottom="75dp"
+        android:layout_marginLeft="10dp"
+        android:text="Bluetooth" />
 
 </RelativeLayout>
