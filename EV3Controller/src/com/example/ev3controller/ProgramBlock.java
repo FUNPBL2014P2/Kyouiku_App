@@ -5,11 +5,13 @@ import android.graphics.Point;
 
 public class ProgramBlock extends Block{
 	private ProgramBlock next, prev;//接続されている前と後ろのブロック
+	private int indent;
 	
 	public ProgramBlock(int type, int x, int y, int Width, int Height) {
 		super(type, x, y, Width, Height);
 		next = null;
 		prev = null;
+		indent = 0;
 	}
 	
 	//コンストラクタ
@@ -55,5 +57,15 @@ public class ProgramBlock extends Block{
 	//繋がっている前のプログラミングブロックを取得する
 	public ProgramBlock getPrevBlock(){
 		return prev;
+	}
+	
+	//インデントレベルを設定する
+	public void setIndentLevel(int level){
+		indent = level;
+	}
+	
+	//インデントレベルを取得する
+	public int getIndentLevel(){
+		return indent;
 	}
 }

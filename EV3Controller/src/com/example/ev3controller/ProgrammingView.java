@@ -20,15 +20,16 @@ import com.example.ev3controller.EV3ProgramCommand;
 public class ProgrammingView extends View
 implements GestureDetector.OnGestureListener{
 	Bitmap genreImage[] = new Bitmap[3];//ブロックイメージの読み込み
-	int genreLineX;
 
+	int genreLineX;//ジャンルエリアとインスタンスエリアの境界線のX座標
+	
 	int InstanceBlocksNum = 20;//インスタンスブロックの数
-	Bitmap blockImage[] = new Bitmap[InstanceBlocksNum];
-	Block insBlock[] = new Block[InstanceBlocksNum];
-	int insHead,insRange;
-	int instanceLineX;
-	boolean instanceFlag = false;
-
+	Bitmap blockImage[] = new Bitmap[InstanceBlocksNum];//各プログラムブロックのイメージを格納する変数
+	Block insBlock[] = new Block[InstanceBlocksNum];//インスタンスブロックの管理する変数
+	int insHead,insRange;//インスタンスエリアに表示するブロックのイメージのblockImage[]上の最初のインデックスと、そこから表示する数
+	int instanceLineX;//インスタンスエリアの境界線と作業スペースののX座標
+	
+	boolean instanceFlag = false;//インスタンスエリアを表示しているのかを保持する
 
 	private List<ProgramBlock> blockList = new ArrayList<ProgramBlock>();//生成したブロックを格納する変数
 	private boolean touchProgramBlockFlag = false;//ブロックがタッチされている状態かを記憶する変数
@@ -47,10 +48,12 @@ implements GestureDetector.OnGestureListener{
 	private ProgrammingActivity activity;//親アクティビティを格納する変数
 
 	private GestureDetector gestureDetector;//イベントからジェスチャーイベントを飛びたすクラス
-
-	private static final double BLOCK_SCALE = 0.6;
-
-	private ProgramBlock startBlock;
+	
+	private static final double BLOCK_SCALE = 0.6;//元のブロックの画像の拡大・縮小比率
+	
+	private ProgramBlock startBlock;//スタートブロックを管理する変数
+	
+	private int indentWidth;//インデントを下げる表現をする時、どれくらいずらすかを保持する
 
 	//コンストラクタ
 	public ProgrammingView(Context context){
@@ -104,30 +107,20 @@ implements GestureDetector.OnGestureListener{
 		paint.setStrokeWidth(10.0f);
 		paint.setStyle(Paint.Style.STROKE);
 		paint.setColor(Color.RED);
-		System.out.println("minHeight="+minHeight);
-		System.out.println("nowHeight="+nowHeight);
-		System.out.println("maxHeight="+maxHeight);
 		if(nowHeight == minHeight)
 			canvas.drawLine(instanceLineX, 5, dispSize.x, 5, paint);
 		else if(nowHeight == maxHeight){
-			System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaadispSize.y="+dispSize.y);
 			canvas.drawLine(instanceLineX, dispSize.y-165, dispSize.x, dispSize.y-165, paint);
 		}
 
 
 		//作業スペースの左端
-		System.out.println("leftWorkX="+leftWorkX);
-		System.out.println("nowWorkX="+nowWorkX);
-		System.out.println("rightWorkX="+rightWorkX);
 		if(nowWorkX == leftWorkX)
 			canvas.drawLine(instanceLineX, 0, instanceLineX, dispSize.y, paint);
 		else if(nowWorkX == rightWorkX)
 			canvas.drawLine(dispSize.x-5, 0, dispSize.x-5, dispSize.y, paint);
 
 		//インスタンスエリアの上限、下限
-		System.out.println("minInstanceHeight="+minInstanceHeight);
-		System.out.println("nowInstanceHeight="+nowInstanceHeight);
-		System.out.println("maxInstanceHeight="+maxInstanceHeight);
 		paint.setStrokeWidth(20.0f);
 		paint.setStyle(Paint.Style.STROKE);
 		paint.setColor(Color.GREEN);
@@ -141,12 +134,6 @@ implements GestureDetector.OnGestureListener{
 			canvas.drawBitmap(genreImage[i], 25, 25+200*i, null);
 		}
 
-		//スタートブロックの座標の修正
-		//int startx;
-		//if(insRange==0) startx= genreLineX;
-		//else startx = instanceLineX;
-		//startBlock.setPosition(new Point(startx+30, startBlock.getPosition().y));
-
 		//インスタンスブロック
 		if(insRange != 0){
 			for(int i=insHead; i<insHead+insRange; i++){
@@ -158,10 +145,11 @@ implements GestureDetector.OnGestureListener{
 		for(int i=0; i<blockList.size(); i++){
 			drawBlock(canvas, blockList.get(i));
 			if(EV3ProgramCommand.FMIN <= blockList.get(i).getBlockType() && blockList.get(i).getBlockType() <= EV3ProgramCommand.FMAX){
-				paint.setTextSize(24);
+				paint.setTextSize(48);
 				paint.setStyle(Paint.Style.FILL);
 				paint.setColor(Color.BLACK);
-				canvas.drawText((blockList.get(i).getBlockType() - EV3ProgramCommand.FBASE)+"回繰り返す", blockList.get(i).getPosition().x + 10, blockList.get(i).getPosition().y + 40, paint);
+				canvas.drawText(Integer.toString(blockList.get(i).getBlockType() - EV3ProgramCommand.FBASE),
+						blockList.get(i).getPosition().x + blockList.get(i).getIndentLevel() * indentWidth + 100, blockList.get(i).getPosition().y + 85, paint);
 			}
 		}
 	}
@@ -240,7 +228,7 @@ implements GestureDetector.OnGestureListener{
 				if(connectBlockNum != -1){//もし他のブロックとの接続範囲に入ったら、接続する
 					connectPrevBlock(connectBlockNum);
 					Point prevBlockPosition = new Point(blockList.get(connectBlockNum).getPosition().x,
-							blockList.get(connectBlockNum).getPosition().y + blockList.get(connectBlockNum).getHeight()-25);
+							blockList.get(connectBlockNum).getPosition().y + blockList.get(connectBlockNum).getHeight()-38);
 					blockList.get(blockList.size()-1).setPosition(prevBlockPosition);
 				}else{//違えば、ブロックはタッチされている位置になる
 					disconnectPrevBlock();
@@ -250,7 +238,7 @@ implements GestureDetector.OnGestureListener{
 				//移動ブロックとつながっているブロックの座標の変更
 				for(ProgramBlock block = blockList.get(blockList.size()-1).getNextBlock(); block != null; block = block.getNextBlock()){
 					Point blocksize = getBlockSize(block.getPrevBlock().getBlockType());
-					block.setPosition(new Point(block.getPrevBlock().getPosition().x, block.getPrevBlock().getPosition().y + blocksize.y-25));
+					block.setPosition(new Point(block.getPrevBlock().getPosition().x, block.getPrevBlock().getPosition().y + blocksize.y-38));
 				}
 			}
 			invalidate();
@@ -313,6 +301,7 @@ implements GestureDetector.OnGestureListener{
 		return 0;
 	}
 
+	//どのインスタンスブロックをタッチしたか判定する
 	public int JudgeTouchInstanceBlock(MotionEvent event){
 		for(int i=insHead; i<insHead+insRange; i++){
 			if(insBlock[i].isTouch(event) == true){
@@ -323,6 +312,7 @@ implements GestureDetector.OnGestureListener{
 		return -1;
 	}
 
+	//インスタンスブロックの初期化とブロックイメージの初期化を行う
 	public void setInctanceBlock(){
 		Resources r = getResources();
 		int i;
@@ -341,19 +331,19 @@ implements GestureDetector.OnGestureListener{
 		blockImage[8] = BitmapFactory.decodeResource(r, R.drawable.ibswt);
 		blockImage[9] = BitmapFactory.decodeResource(r, R.drawable.irswt);
 		blockImage[10] = BitmapFactory.decodeResource(r, R.drawable.ilswt);
-		blockImage[11] = BitmapFactory.decodeResource(r, R.drawable.ilswt);//TODO あとで修正
-		blockImage[12] = BitmapFactory.decodeResource(r, R.drawable.ilswt);//TODO あとで修正
-
+		blockImage[11] = BitmapFactory.decodeResource(r, R.drawable.ielse);
+		blockImage[12] = BitmapFactory.decodeResource(r, R.drawable.iend);
+				
 		//繰り返し(for) 13,14
-		blockImage[13] = BitmapFactory.decodeResource(r, R.drawable.ilswt);//TODO あとで修正
-		blockImage[14] = BitmapFactory.decodeResource(r, R.drawable.ilswt);//TODO あとで修正
-
+		blockImage[13] = BitmapFactory.decodeResource(r, R.drawable.ffor);
+		blockImage[14] = BitmapFactory.decodeResource(r, R.drawable.uend);
+		
 		//繰り返し(until) 15~18
 		blockImage[15] = BitmapFactory.decodeResource(r, R.drawable.ubswt);
 		blockImage[16] = BitmapFactory.decodeResource(r, R.drawable.urswt);
 		blockImage[17] = BitmapFactory.decodeResource(r, R.drawable.ulswt);
-		blockImage[18] = BitmapFactory.decodeResource(r, R.drawable.ulswt);//TODO あとで修正
-
+		blockImage[18] = BitmapFactory.decodeResource(r, R.drawable.uend);
+		
 		//スタート 19
 		blockImage[19] = BitmapFactory.decodeResource(r, R.drawable.start);
 
@@ -361,6 +351,9 @@ implements GestureDetector.OnGestureListener{
 		for(i=0; i<InstanceBlocksNum; i++){
 			blockImage[i] = Bitmap.createScaledBitmap(blockImage[i], (int)(blockImage[i].getWidth()*BLOCK_SCALE), (int)(blockImage[i].getHeight()*BLOCK_SCALE), false);
 		}
+		
+		indentWidth = blockImage[getBlockImageIndex(EV3ProgramCommand.FF)].getWidth() / 4
+				- blockImage[getBlockImageIndex(EV3ProgramCommand.FF)].getWidth() / 20;
 
 		//動き 0~7
 		i=0;
@@ -392,7 +385,8 @@ implements GestureDetector.OnGestureListener{
 		insBlock[17] = new Block(EV3ProgramCommand.ULSWT, genreLineX+25, 25+200*i++, blockImage[17]);
 		insBlock[18] = new Block(EV3ProgramCommand.UEND, genreLineX+25, 25+200*i++, blockImage[18]);
 	}
-
+	
+	//インスタンスエリアに表示されるブロックのうち、最大の幅を持つブロックの横幅の値を返す
 	public int getMaxInstanceBlockWidth(){
 		int maxWidth;
 
@@ -405,6 +399,7 @@ implements GestureDetector.OnGestureListener{
 		return genreLineX + maxWidth + 130;
 	}
 
+	//ブロックタイプから対応するイメージのインデックスを取得する
 	public int getBlockImageIndex(int blockType){
 		int index = -1;
 		switch(blockType){
@@ -457,7 +452,7 @@ implements GestureDetector.OnGestureListener{
 			index=16;
 			break;
 		case EV3ProgramCommand.ULSWT:
-			index=18;
+			index=17;
 			break;
 		case EV3ProgramCommand.UEND:
 			index=18;
@@ -492,8 +487,8 @@ implements GestureDetector.OnGestureListener{
 	public int judAutoConnectBlock(MotionEvent event){
 		for(int i=blockList.size()-2; i>=0; i--){
 			if(blockList.get(i).getNextBlock() == null || blockList.get(i).getNextBlock() == blockList.get(blockList.size()-1)){
-				if(blockList.get(i).getPosition().x - blockList.get(i).getHeight() / 2 <= event.getX()
-						&& event.getX() <= blockList.get(i).getPosition().x + blockList.get(i).getWidth() + blockList.get(i).getHeight() / 2
+				if(blockList.get(i).getPosition().x - blockList.get(i).getHeight() / 2 <= event.getX() + blockList.get(i).getIndentLevel() * indentWidth
+						&& event.getX() <= blockList.get(i).getPosition().x + blockList.get(i).getWidth() + blockList.get(i).getHeight() / 2 + blockList.get(i).getIndentLevel() * indentWidth
 						&& blockList.get(i).getPosition().y + blockList.get(i).getHeight() / 2 <= event.getY()
 						&& event.getY() <= blockList.get(i).getPosition().y + blockList.get(i).getHeight() + blockList.get(i).getHeight() / 2){
 					return i;
@@ -507,6 +502,7 @@ implements GestureDetector.OnGestureListener{
 	public void connectPrevBlock(int i){
 		blockList.get(i).setNextBlock(blockList.get(blockList.size()-1));
 		blockList.get(blockList.size()-1).setPrevBlock(blockList.get(i));
+		arrangeIndent(blockList.get(blockList.size()-1));
 	}
 
 	//タッチしているブロックと繋がっている前のブロックとの関係を無くすメソッド
@@ -514,6 +510,8 @@ implements GestureDetector.OnGestureListener{
 		if(blockList.get(blockList.size()-1).getPrevBlock() != null)
 			blockList.get(blockList.size()-1).getPrevBlock().setNextBlock(null);
 		blockList.get(blockList.size()-1).setPrevBlock(null);
+		blockList.get(blockList.size()-1).setIndentLevel(0);
+		arrangeIndent(blockList.get(blockList.size()-1));
 	}
 
 	//どのプログラムブロックにタッチしたかを判定し順番をソートするメソッド
@@ -529,16 +527,18 @@ implements GestureDetector.OnGestureListener{
 	}
 
 	//プログラムブロックの表示の簡略化のためのメソッド
-	public void drawBlock(Canvas canvas, Block block){
-		canvas.drawBitmap(blockImage[getBlockImageIndex(block.getBlockType())], block.getPosition().x, block.getPosition().y, null);
+	public void drawBlock(Canvas canvas, ProgramBlock block){
+		canvas.drawBitmap(blockImage[getBlockImageIndex(block.getBlockType())], block.getPosition().x + block.getIndentLevel() * indentWidth, block.getPosition().y, null);
 	}
 
+	//現在使用していない
 	@Override
 	public boolean onDown(MotionEvent e) {
 		// TODO 自動生成されたメソッド・スタブ
 		return false;
 	}
 
+	//現在使用していない
 	@Override
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 			float velocityY) {
@@ -546,8 +546,10 @@ implements GestureDetector.OnGestureListener{
 		return false;
 	}
 
+	//長押しした時
 	@Override
 	public void onLongPress(MotionEvent e) {
+		//長押ししたのが繰り返し(For)ブロックだったら、ダイアログを表示する
 		if(judTouchProgramBlock(e) != -1){
 			if(EV3ProgramCommand.FMIN <= blockList.get(blockList.size()-1).getBlockType()
 					&& blockList.get(blockList.size()-1).getBlockType() <= EV3ProgramCommand.FMAX){
@@ -558,6 +560,7 @@ implements GestureDetector.OnGestureListener{
 		}
 	}
 
+	//現在使用していない
 	@Override
 	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
 			float distanceY) {
@@ -569,10 +572,8 @@ implements GestureDetector.OnGestureListener{
 				distanceY = distanceY - (nowHeight + distanceY - maxHeight);
 			}
 			if(nowWorkX + (int)distanceX < leftWorkX){
-				System.out.println("nowWorkX + (int)distanceX < 0");
 				distanceX = distanceX - (nowWorkX + distanceX - leftWorkX);
 			}else if(rightWorkX < nowWorkX + (int)distanceX){
-				System.out.println("rightWorkX < nowWorkX + (int)distanceX");
 				distanceX = distanceX - (nowWorkX + distanceX - rightWorkX);
 			}
 			nowHeight = nowHeight + (int)distanceY;
@@ -599,12 +600,14 @@ implements GestureDetector.OnGestureListener{
 		return false;
 	}
 
+	//現在使用していない
 	@Override
 	public void onShowPress(MotionEvent e) {
 		// TODO 自動生成されたメソッド・スタブ
 
 	}
 
+	//現在使用していない
 	@Override
 	public boolean onSingleTapUp(MotionEvent e) {
 		// TODO 自動生成されたメソッド・スタブ
@@ -616,8 +619,19 @@ implements GestureDetector.OnGestureListener{
 		blockList.get(blockList.size()-1).setBlockType(value.intValue() + EV3ProgramCommand.FBASE);
 		invalidate();
 	}
-
+	
+	//繰り返し(For)の値をダイアログから設定するときに必要
 	public void setActivity(ProgrammingActivity mainactivity){
 		activity = mainactivity;
+	}
+	
+	//インデントの整理
+	public void arrangeIndent(ProgramBlock Sblock){
+		for(ProgramBlock block = Sblock; block != null; block = block.getNextBlock()){
+			if(block.getPrevBlock() == null) continue;
+			block.setIndentLevel(block.getPrevBlock().getIndentLevel()
+				+ EV3ProgramCommand.getOutputIndentValue(block.getPrevBlock().getBlockType())
+				+ EV3ProgramCommand.getInputIndentValue(block.getBlockType()));
+		}
 	}
 }
