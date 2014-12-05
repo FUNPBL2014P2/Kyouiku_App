@@ -20,15 +20,15 @@ import com.example.ev3controller.EV3ProgramCommand;
 public class ProgrammingView extends View
 implements GestureDetector.OnGestureListener{
 	Bitmap genreImage[] = new Bitmap[3];//ブロックイメージの読み込み
-	int genreLineX;
+	int genreLineX;//ジャンルエリアとインスタンスエリアの境界線のX座標
 	
 	int InstanceBlocksNum = 20;//インスタンスブロックの数
-	Bitmap blockImage[] = new Bitmap[InstanceBlocksNum];
-	Block insBlock[] = new Block[InstanceBlocksNum];
-	int insHead,insRange;
-	int instanceLineX;
+	Bitmap blockImage[] = new Bitmap[InstanceBlocksNum];//各プログラムブロックのイメージを格納する変数
+	Block insBlock[] = new Block[InstanceBlocksNum];//インスタンスブロックの管理する変数
+	int insHead,insRange;//インスタンスエリアに表示するブロックのイメージのblockImage[]上の最初のインデックスと、そこから表示する数
+	int instanceLineX;//インスタンスエリアの境界線と作業スペースののX座標
 	
-	boolean instanceFlag = false;
+	boolean instanceFlag = false;//インスタンスエリアを表示しているのかを保持する
 	
 	private List<ProgramBlock> blockList = new ArrayList<ProgramBlock>();//生成したブロックを格納する変数
 	private boolean touchProgramBlockFlag = false;//ブロックがタッチされている状態かを記憶する変数
@@ -41,9 +41,11 @@ implements GestureDetector.OnGestureListener{
 
 	private GestureDetector gestureDetector;//イベントからジェスチャーイベントを飛びたすクラス
 	
-	private static final double BLOCK_SCALE = 0.6;
+	private static final double BLOCK_SCALE = 0.6;//元のブロックの画像の拡大・縮小比率
 	
-	private ProgramBlock startBlock;
+	private ProgramBlock startBlock;//スタートブロックを管理する変数
+	
+	private int indentWidth;//インデントを下げる表現をする時、どれくらいずらすかを保持する
 
 	//コンストラクタ
 	public ProgrammingView(Context context){
@@ -117,7 +119,7 @@ implements GestureDetector.OnGestureListener{
 				paint.setTextSize(24);
 				paint.setStyle(Paint.Style.FILL);
 				paint.setColor(Color.BLACK);
-				canvas.drawText((blockList.get(i).getBlockType() - EV3ProgramCommand.FBASE)+"回繰り返す", blockList.get(i).getPosition().x + 10, blockList.get(i).getPosition().y + 40, paint);
+				canvas.drawText((blockList.get(i).getBlockType() - EV3ProgramCommand.FBASE)+"回繰り返す", blockList.get(i).getPosition().x + blockList.get(i).getIndentLevel() * indentWidth + 10, blockList.get(i).getPosition().y + 40, paint);
 			}
 		}
 	}
@@ -250,6 +252,7 @@ implements GestureDetector.OnGestureListener{
 		return 0;
 	}
 	
+	//どのインスタンスブロックをタッチしたか判定する
 	public int JudgeTouchInstanceBlock(MotionEvent event){
 		for(int i=insHead; i<insHead+insRange; i++){
 			if(insBlock[i].isTouch(event) == true){
@@ -260,6 +263,7 @@ implements GestureDetector.OnGestureListener{
 		return -1;
 	}
 
+	//インスタンスブロックの初期化とブロックイメージの初期化を行う
 	public void setInctanceBlock(){
 		Resources r = getResources();
 		int i;
@@ -299,6 +303,8 @@ implements GestureDetector.OnGestureListener{
 			blockImage[i] = Bitmap.createScaledBitmap(blockImage[i], (int)(blockImage[i].getWidth()*BLOCK_SCALE), (int)(blockImage[i].getHeight()*BLOCK_SCALE), false);
 		}
 		
+		indentWidth = blockImage[getBlockImageIndex(EV3ProgramCommand.FF)].getWidth() / 4;
+		
 		//動き 0~7
 		i=0;
 		insBlock[0] = new Block(EV3ProgramCommand.FF, genreLineX+25, 25+200*i++, blockImage[0]);
@@ -330,6 +336,7 @@ implements GestureDetector.OnGestureListener{
 		insBlock[18] = new Block(EV3ProgramCommand.UEND, genreLineX+25, 25+200*i++, blockImage[18]);
 	}
 	
+	//インスタンスエリアに表示されるブロックのうち、最大の幅を持つブロックの横幅の値を返す
 	public int getMaxInstanceBlockWidth(){
 		int maxWidth;
 		
@@ -342,6 +349,7 @@ implements GestureDetector.OnGestureListener{
 		return genreLineX + maxWidth + 60;
 	}
 	
+	//ブロックタイプから対応するイメージのインデックスを取得する
 	public int getBlockImageIndex(int blockType){
 		int index = -1;
 		switch(blockType){
@@ -429,8 +437,8 @@ implements GestureDetector.OnGestureListener{
 	public int judAutoConnectBlock(MotionEvent event){
 		for(int i=blockList.size()-2; i>=0; i--){
 			if(blockList.get(i).getNextBlock() == null || blockList.get(i).getNextBlock() == blockList.get(blockList.size()-1)){
-				if(blockList.get(i).getPosition().x - blockList.get(i).getHeight() / 2 <= event.getX()
-						&& event.getX() <= blockList.get(i).getPosition().x + blockList.get(i).getWidth() + blockList.get(i).getHeight() / 2
+				if(blockList.get(i).getPosition().x - blockList.get(i).getHeight() / 2 <= event.getX() + blockList.get(i).getIndentLevel() * indentWidth
+						&& event.getX() <= blockList.get(i).getPosition().x + blockList.get(i).getWidth() + blockList.get(i).getHeight() / 2 + blockList.get(i).getIndentLevel() * indentWidth
 						&& blockList.get(i).getPosition().y + blockList.get(i).getHeight() / 2 <= event.getY()
 						&& event.getY() <= blockList.get(i).getPosition().y + blockList.get(i).getHeight() + blockList.get(i).getHeight() / 2){
 					return i;
@@ -444,6 +452,9 @@ implements GestureDetector.OnGestureListener{
 	public void connectPrevBlock(int i){
 		blockList.get(i).setNextBlock(blockList.get(blockList.size()-1));
 		blockList.get(blockList.size()-1).setPrevBlock(blockList.get(i));
+		blockList.get(blockList.size()-1).setIndentLevel(blockList.get(i).getIndentLevel()
+				+ EV3ProgramCommand.getOutputIndentValue(blockList.get(i).getBlockType())
+				+ EV3ProgramCommand.getInputIndentValue(blockList.get(blockList.size()-1).getBlockType()));
 	}
 
 	//タッチしているブロックと繋がっている前のブロックとの関係を無くすメソッド
@@ -451,6 +462,7 @@ implements GestureDetector.OnGestureListener{
 		if(blockList.get(blockList.size()-1).getPrevBlock() != null)
 			blockList.get(blockList.size()-1).getPrevBlock().setNextBlock(null);
 		blockList.get(blockList.size()-1).setPrevBlock(null);
+		blockList.get(blockList.size()-1).setIndentLevel(0);
 	}
 
 	//どのプログラムブロックにタッチしたかを判定し順番をソートするメソッド
@@ -466,16 +478,18 @@ implements GestureDetector.OnGestureListener{
 	}
 	
 	//プログラムブロックの表示の簡略化のためのメソッド
-	public void drawBlock(Canvas canvas, Block block){
-		canvas.drawBitmap(blockImage[getBlockImageIndex(block.getBlockType())], block.getPosition().x, block.getPosition().y, null);
+	public void drawBlock(Canvas canvas, ProgramBlock block){
+		canvas.drawBitmap(blockImage[getBlockImageIndex(block.getBlockType())], block.getPosition().x + block.getIndentLevel() * indentWidth, block.getPosition().y, null);
 	}
 
+	//現在使用していない
 	@Override
 	public boolean onDown(MotionEvent e) {
 		// TODO 自動生成されたメソッド・スタブ
 		return false;
 	}
 
+	//現在使用していない
 	@Override
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 			float velocityY) {
@@ -483,8 +497,10 @@ implements GestureDetector.OnGestureListener{
 		return false;
 	}
 
+	//長押しした時
 	@Override
 	public void onLongPress(MotionEvent e) {
+		//長押ししたのが繰り返し(For)ブロックだったら、ダイアログを表示する
 		if(judTouchProgramBlock(e) != -1){
 			if(EV3ProgramCommand.FMIN <= blockList.get(blockList.size()-1).getBlockType()
 					&& blockList.get(blockList.size()-1).getBlockType() <= EV3ProgramCommand.FMAX){
@@ -495,6 +511,7 @@ implements GestureDetector.OnGestureListener{
 		}
 	}
 
+	//現在使用していない
 	@Override
 	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
 			float distanceY) {
@@ -502,12 +519,14 @@ implements GestureDetector.OnGestureListener{
 		return false;
 	}
 
+	//現在使用していない
 	@Override
 	public void onShowPress(MotionEvent e) {
 		// TODO 自動生成されたメソッド・スタブ
 		
 	}
 
+	//現在使用していない
 	@Override
 	public boolean onSingleTapUp(MotionEvent e) {
 		// TODO 自動生成されたメソッド・スタブ
@@ -520,6 +539,7 @@ implements GestureDetector.OnGestureListener{
 		invalidate();
 	}
 	
+	//繰り返し(For)の値をダイアログから設定するときに必要
 	public void setActivity(ProgrammingActivity mainactivity){
 		activity = mainactivity;
 	}
