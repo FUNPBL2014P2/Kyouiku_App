@@ -30,11 +30,11 @@ public class WatchingSensor extends Thread{
 			for(int i=0;i<4;i++){
 				if(Sensors[i].getPercentValue()>=50){
 					sb[i].append('p');
-					//System.out.println("センサー"+i+"="+sb[i]);
+					System.out.println("センサー"+i+"="+sb[i]);
 				}
 				else{
 					sb[i].append('g');
-					//System.out.println("センサー"+i+"="+sb[i]);
+					System.out.println("センサー"+i+"="+sb[i]);
 				}
 				//Handlerに通知する
 				Message msg = new Message();
@@ -42,6 +42,9 @@ public class WatchingSensor extends Thread{
 				msg.what = i;
 				//handlerにmsgをsendする。
 				handler.sendMessage(msg);
+				if(ev3mt.getFunctionstatus() == 2){
+					sb[i].delete(0, sb[i].length()-1);
+				}
 			}
 		}
 	}

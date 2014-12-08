@@ -76,6 +76,7 @@ public class EV3Interpreter{
 		ProgramBlock cur = program.get(0);
 		int count = 0;
 		while(cur != null && ERROR_CODE == 0){
+			System.out.println(ev3mt.ev3.getLeftTouchSensor() + ":::" + ev3mt.ev3.getLeftTouchSensor());
 			switch(cur.getBlockType()){
 			case EV3ProgramCommand.START:
 				cur = cur.getNextBlock();
@@ -167,7 +168,8 @@ public class EV3Interpreter{
 				cur = cur.getNextBlock();
 				break;
 			case EV3ProgramCommand.URSWT:
-				if(ev3mt.ev3.getRightTouchSensor() == false)
+				//TODO getLeftTouchSensor()とgetRightTouchSensor()の取る値が逆
+				if(ev3mt.ev3.getLeftTouchSensor() == false)
 					cur = cur.getNextBlock();
 				else{
 					count = 0;
@@ -184,7 +186,8 @@ public class EV3Interpreter{
 				}
 				break;
 			case EV3ProgramCommand.ULSWT:
-				if(ev3mt.ev3.getLeftTouchSensor() == false)
+				//TODO getLeftTouchSensor()とgetRightTouchSensor()の取る値が逆
+				if(ev3mt.ev3.getRightTouchSensor() == false)
 					cur = cur.getNextBlock();
 				else{
 					count = 0;
