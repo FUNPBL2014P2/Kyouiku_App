@@ -36,7 +36,12 @@ public class WatchingSensor extends Thread{
 					sb[i].append('g');
 					//System.out.println("センサー"+i+"="+sb[i]);
 				}
-				sb[i].delete(0, sb[i].length()-1);
+				//Handlerに通知する
+				Message msg = new Message();
+				//msgのwhatにselectedIndexの値を格納
+				msg.what = i;
+				//handlerにmsgをsendする。
+				handler.sendMessage(msg);
 			}
 		}
 	}

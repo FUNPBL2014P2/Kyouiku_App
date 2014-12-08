@@ -39,7 +39,8 @@
             </intent-filter>
         </activity>
         
-        <activity android:name="RemoteActivity"></activity>
+        <activity android:name="RemoteActivity"
+            android:screenOrientation="landscape"></activity>
     </application>
 
 </manifest>
