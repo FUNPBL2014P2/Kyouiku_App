@@ -11,11 +11,13 @@ import android.os.Message;
 
 
 public class WatchingSensor extends Thread{
+	public EV3Materials ev3mt;
+	
 	StringBuffer[] sb;
 	private UnidentifiedSensor[] Sensors = new UnidentifiedSensor[4];
 	ImageView[] blocks;
 	private MyHandler handler = new MyHandler();
-
+	
 
 	public WatchingSensor(UnidentifiedSensor[] mSensors, StringBuffer[] str, ImageView[] block){
 		this.Sensors = mSensors;
@@ -35,13 +37,6 @@ public class WatchingSensor extends Thread{
 					//System.out.println("センサー"+i+"="+sb[i]);
 				}
 				sb[i].delete(0, sb[i].length()-1);
-				//Handlerに通知する
-				//	Message msg = new Message();//こいつがあると、エラーが出る
-				//msgのwhatにselectedIndexの値を格納
-				//	msg.what = i;//こいつがあると、エラーが出る
-				//handlerにmsgをsendする。
-				//	handler.sendMessage(msg);//こいつがあると、エラーが出る
-
 			}
 		}
 	}
@@ -49,14 +44,18 @@ public class WatchingSensor extends Thread{
 	class MyHandler extends Handler{
 		@Override
 		public void handleMessage(Message msg){
-			int index = msg.what;
-			if(sb[index].charAt(sb[index].length()-1)=='p'){
-				blocks[index].setImageResource(R.drawable.pinkblock);
-			}
-			else{
-				//TODO
-				//ブロックのビューが使えるようになったらこのコメントアウトを消す
-				blocks[index].setImageResource(R.drawable.grayblock);
+			if(ev3mt.getFunctionstatus() == 1){
+				int index = msg.what;
+				if(sb[index].charAt(sb[index].length()-1)=='p'){
+					blocks[index].setImageResource(R.drawable.pinkblock);
+					sb[index].delete(0, sb[index].length()-1);
+				}
+				else{
+					//TODO
+					//ブロックのビューが使えるようになったらこのコメントアウトを消す
+					blocks[index].setImageResource(R.drawable.grayblock);
+					sb[index].delete(0, sb[index].length()-1);
+				}
 			}
 		}
 	}

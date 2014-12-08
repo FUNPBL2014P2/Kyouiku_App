@@ -7,7 +7,6 @@ import ev3command.ev3.UnidentifiedSensor;
 import ev3command.ev3.comm.EV3Command;
 
 public class EV3 {
-	public EV3Materials ev3mt;
 	private UnidentifiedSensor[] mSensors = new UnidentifiedSensor[4];
 	private Motor[] mMotors = new Motor[4];
 	Thread thread;
