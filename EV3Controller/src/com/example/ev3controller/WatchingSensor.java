@@ -11,6 +11,7 @@ import android.os.Message;
 
 
 public class WatchingSensor extends Thread{
+	public EV3Materials ev3mt;
 	StringBuffer[] sb;
 	private UnidentifiedSensor[] Sensors = new UnidentifiedSensor[4];
 	ImageView[] blocks;
@@ -60,7 +61,9 @@ public class WatchingSensor extends Thread{
 			else{
 				//TODO
 				//ブロックのビューが使えるようになったらこのコメントアウトを消す
-				blocks[index].setImageResource(R.drawable.grayblock);
+				if(ev3mt.getFunctionstatus() == 1){
+					blocks[index].setImageResource(R.drawable.grayblock);
+				}
 				sb[index].delete(0, sb[index].length()-1);
 			}
 		}
