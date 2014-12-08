@@ -85,15 +85,15 @@ public class EV3Interpreter{
 				cur = cur.getNextBlock();
 				break;
 			case EV3ProgramCommand.FLF:
-				ev3SecondMoeve(100, 50);
+				ev3SecondMoeve(50, 100);
 				cur = cur.getNextBlock();
 				break;
 			case EV3ProgramCommand.FB:
-				ev3SecondMoeve(100, -100);
+				ev3SecondMoeve(-100, 100);
 				cur = cur.getNextBlock();
 				break;
 			case EV3ProgramCommand.BLB:
-				ev3SecondMoeve(-100, -50);
+				ev3SecondMoeve(-50, -100);
 				cur = cur.getNextBlock();
 				break;
 			case EV3ProgramCommand.BB:
@@ -101,15 +101,15 @@ public class EV3Interpreter{
 				cur = cur.getNextBlock();
 				break;
 			case EV3ProgramCommand.LBB:
-				ev3SecondMoeve(-50, -100);
+				ev3SecondMoeve(-100, -50);
 				cur = cur.getNextBlock();
 				break;
 			case EV3ProgramCommand.BF:
-				ev3SecondMoeve(-100, 100);
+				ev3SecondMoeve(100, -100);
 				cur = cur.getNextBlock();
 				break;
 			case EV3ProgramCommand.LFF:
-				ev3SecondMoeve(50, 100);
+				ev3SecondMoeve(100, 50);
 				cur = cur.getNextBlock();
 				break;
 			case EV3ProgramCommand.IRSWT:
