@@ -113,7 +113,7 @@ public class EV3Interpreter{
 				cur = cur.getNextBlock();
 				break;
 			case EV3ProgramCommand.IRSWT:
-				if(ev3mt.ev3.getRightTouchSensor() == true)
+				if(ev3mt.ev3.getLeftTouchSensor() == true)//メソッドの取る値がおかしい
 					cur = cur.getNextBlock();
 				else{
 					count = 0;
@@ -129,7 +129,7 @@ public class EV3Interpreter{
 				}
 				break;
 			case EV3ProgramCommand.ILSWT:
-				if(ev3mt.ev3.getLeftTouchSensor() == true)
+				if(ev3mt.ev3.getRightTouchSensor() == true)//メソッドの取る値がおかしい
 					cur = cur.getNextBlock();
 				else{
 					count = 0;
@@ -238,6 +238,7 @@ public class EV3Interpreter{
 				&& cur.getBlockType() <= EV3ProgramCommand.FMAX){
 					if(loop_now == true){
 						countlist.set(countlist.size()-1, countlist.get(countlist.size()-1)-1);
+						loop_now = false;
 					}else{
 						countlist.add(cur.getBlockType()-100);
 					}
@@ -246,14 +247,13 @@ public class EV3Interpreter{
 						cur = cur.getNextBlock();
 					else{
 						count = 0;
-						loop_now = false;
 						countlist.remove(countlist.size()-1);
 						cur = cur.getNextBlock();
 						while(!((cur.getBlockType() == EV3ProgramCommand.UEND || cur.getBlockType() == EV3ProgramCommand.FEND) && count == 0)){
 							if((EV3ProgramCommand.URSWT <= cur.getBlockType() && cur.getBlockType() <= EV3ProgramCommand.UBSWT)
 									|| (EV3ProgramCommand.FMIN <= cur.getBlockType() && cur.getBlockType() <= EV3ProgramCommand.FMAX))
 								count++;
-							else if(cur.getBlockType() == EV3ProgramCommand.UEND)
+							else if(cur.getBlockType() == EV3ProgramCommand.UEND || cur.getBlockType() == EV3ProgramCommand.FEND)
 								count--;
 							cur = cur.getNextBlock();
 						}
