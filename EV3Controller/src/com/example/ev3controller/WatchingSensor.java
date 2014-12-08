@@ -23,10 +23,6 @@ public class WatchingSensor extends Thread{
 		this.Sensors = mSensors;
 		this.sb = str;
 		this.blocks = block;
-		
-		for(int i=0;i<4;i++){
-			System.out.println("センサーの種類："+Sensors[i].getName());
-		}
 	}
 
 	public void run(){
@@ -34,11 +30,11 @@ public class WatchingSensor extends Thread{
 			for(int i=0;i<4;i++){
 				if(Sensors[i].getPercentValue()>=50){
 					sb[i].append('p');
-					System.out.println("センサー"+i+"="+sb[i]);
+					//System.out.println("センサー"+i+"="+sb[i]);
 				}
 				else{
 					sb[i].append('g');
-					System.out.println("センサー"+i+"="+sb[i]);
+					//System.out.println("センサー"+i+"="+sb[i]);
 				}
 				//Handlerに通知する
 				Message msg = new Message();
@@ -46,7 +42,6 @@ public class WatchingSensor extends Thread{
 				msg.what = i;
 				//handlerにmsgをsendする。
 				handler.sendMessage(msg);
-
 			}
 		}
 	}
@@ -55,17 +50,14 @@ public class WatchingSensor extends Thread{
 		@Override
 		public void handleMessage(Message msg){
 			if(ev3mt.getFunctionstatus() == 1){
-
 				int index = msg.what;
 				if(sb[index].charAt(sb[index].length()-1)=='p'){
 					blocks[index].setImageResource(R.drawable.pinkblock);
 					sb[index].delete(0, sb[index].length()-1);
-
 				}
 				else{
 					//TODO
 					//ブロックのビューが使えるようになったらこのコメントアウトを消す
-
 					blocks[index].setImageResource(R.drawable.grayblock);
 					sb[index].delete(0, sb[index].length()-1);
 				}
