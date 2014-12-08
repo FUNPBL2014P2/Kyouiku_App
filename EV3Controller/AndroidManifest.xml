@@ -18,7 +18,8 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" 
         android:name="EV3Materials" >
-        <activity
+        <activity android:name="ProgrammingActivity" android:screenOrientation="landscape">
+        </activity><activity
             android:name="com.example.ev3controller.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="landscape">
@@ -37,9 +38,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="ProgrammingActivity"
-            android:screenOrientation="landscape" >
-        </activity>
+        
         <activity android:name="RemoteActivity"></activity>
     </application>
 
