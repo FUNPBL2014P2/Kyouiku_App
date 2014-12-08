@@ -34,10 +34,13 @@
         android:id="@+id/bt.connect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/toRemote"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="75dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="67dp"
+        android:layout_marginLeft="180dp"
+        android:layout_toRightOf="@+id/toProgramming"
+        android:background="@drawable/btbtn"
+        android:minHeight="60dp"
+        android:minWidth="128dp"
         android:text="Bluetooth" />
 
 </RelativeLayout>
