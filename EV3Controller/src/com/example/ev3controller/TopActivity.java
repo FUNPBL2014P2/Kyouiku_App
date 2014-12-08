@@ -81,7 +81,7 @@ public class TopActivity extends Activity {
 		toRemoteButton.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
-				
+				ev3mt.setFunctionstatus(1);
 				Intent R_intent = new Intent(TopActivity.this,RemoteActivity.class);
 				R_intent.setClassName("com.example.ev3controller", "com.example.ev3controller.RemoteActivity");
 				startActivity(R_intent);
@@ -91,7 +91,7 @@ public class TopActivity extends Activity {
 		toProgrammingButton.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
-				
+				ev3mt.setFunctionstatus(2);
 				Intent P_intent = new Intent(TopActivity.this,ProgrammingActivity.class);
 				P_intent.setClassName("com.example.ev3controller", "com.example.ev3controller.ProgrammingActivity");
 				startActivity(P_intent);
