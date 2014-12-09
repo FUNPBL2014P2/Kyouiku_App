@@ -11,23 +11,15 @@
     tools:context=".TopActivity" >
 
     <Button
-        android:id="@+id/toProgramming"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/bt.connect"
-        android:layout_alignParentLeft="true"
-        android:layout_marginBottom="131dp"
-        android:layout_marginLeft="48dp"
-        android:text="プログラミング" />
-
-    <Button
         android:id="@+id/toRemote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/toProgramming"
-        android:layout_alignBottom="@+id/toProgramming"
+        android:layout_above="@+id/bt.connect"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="169dp"
+        android:layout_marginBottom="113dp"
+        android:layout_marginRight="50dp"
+        android:minHeight="100dp"
+        android:minWidth="200dp"
         android:text="ラジコン" />
 
     <Button
@@ -35,12 +27,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="67dp"
-        android:layout_marginLeft="180dp"
-        android:layout_toRightOf="@+id/toProgramming"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="39dp"
         android:background="@drawable/btbtn"
         android:minHeight="60dp"
         android:minWidth="128dp"
-        android:text="Bluetooth" />
+        android:text="Bluetooth : OFF" />
+
+    <Button
+        android:id="@+id/toProgramming"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/toRemote"
+        android:layout_alignBottom="@+id/toRemote"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="55dp"
+        android:minHeight="100dp"
+        android:minWidth="200dp"
+        android:text="プログラミング" />
 
 </RelativeLayout>

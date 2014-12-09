@@ -147,7 +147,7 @@ public class TopActivity extends Activity {
 	private void connected() {
 		toRemoteButton.setEnabled(true);
 		toProgrammingButton.setEnabled(true);
-		mConnectButton.setText("Disconnect");
+		mConnectButton.setText("Bluetooth : ON");
 		mConnectButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -185,7 +185,7 @@ public class TopActivity extends Activity {
 		}
 		toRemoteButton.setEnabled(false);
 		toProgrammingButton.setEnabled(false);
-		mConnectButton.setText("Connect");
+		mConnectButton.setText("Bluetooth : OFF");
 		mConnectButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
