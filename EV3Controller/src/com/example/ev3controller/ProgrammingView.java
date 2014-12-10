@@ -33,7 +33,7 @@ implements GestureDetector.OnGestureListener{
 
 	boolean instanceFlag = false;//インスタンスエリアを表示しているのかを保持する
 
-	private List<ProgramBlock> blockList = new ArrayList<ProgramBlock>();//生成したブロックを格納する変数
+	private static List<ProgramBlock> blockList = new ArrayList<ProgramBlock>();//生成したブロックを格納する変数
 	private boolean touchProgramBlockFlag = false;//ブロックがタッチされている状態かを記憶する変数
 
 	private Point dispSize = new Point();//線を描写するのに必要な変数
@@ -85,7 +85,9 @@ implements GestureDetector.OnGestureListener{
 		setInctanceBlock();
 
 		//スタートブロックの追加
-		blockList.add(new ProgramBlock(EV3ProgramCommand.START, 30, 25, blockImage[getBlockImageIndex(EV3ProgramCommand.START)]));
+		if(blockList.size() == 0){
+			blockList.add(new ProgramBlock(EV3ProgramCommand.START, 30, 25, blockImage[getBlockImageIndex(EV3ProgramCommand.START)]));
+		}
 		startBlock = blockList.get(0);
 
 		//インタプリタのインスタンス化
@@ -292,6 +294,14 @@ implements GestureDetector.OnGestureListener{
 			//インスタンスブロックの初期化
 			setInctanceBlock();
 			//スタートブロックの位置の初期化
+			if((startBlock.getPosition().x != genreLineX + 60 || startBlock.getPosition().y != 25) && blockList.size() > 1){//プログラミング画面に戻ってきた時のブロックのズレの修正
+				int diffw = startBlock.getPosition().x -genreLineX + 30;
+				int diffh = startBlock.getPosition().y - 25;
+				ProgramBlock block;
+				for(int i=1; i<blockList.size(); i++){
+					blockList.get(i).setPosition(new Point(blockList.get(i).getPosition().x - diffw + indentWidth, blockList.get(i).getPosition().y - diffh));
+				}
+			}
 			startBlock.setPosition(new Point(genreLineX + 60, 25));
 
 			invalidate();
