@@ -23,10 +23,6 @@ public class WatchingSensor extends Thread{
 		this.Sensors = mSensors;
 		this.sb = str;
 		this.blocks = block;
-		
-		for(int i=0;i<4;i++){
-			System.out.println("センサーの種類："+Sensors[i].getName());
-		}
 	}
 
 	public void run(){
@@ -46,7 +42,9 @@ public class WatchingSensor extends Thread{
 				msg.what = i;
 				//handlerにmsgをsendする。
 				handler.sendMessage(msg);
-
+				if(ev3mt.getFunctionstatus() == 2){
+					sb[i].delete(0, sb[i].length()-1);
+				}
 			}
 		}
 	}
@@ -55,17 +53,14 @@ public class WatchingSensor extends Thread{
 		@Override
 		public void handleMessage(Message msg){
 			if(ev3mt.getFunctionstatus() == 1){
-
 				int index = msg.what;
 				if(sb[index].charAt(sb[index].length()-1)=='p'){
 					blocks[index].setImageResource(R.drawable.pinkblock);
 					sb[index].delete(0, sb[index].length()-1);
-
 				}
 				else{
 					//TODO
 					//ブロックのビューが使えるようになったらこのコメントアウトを消す
-
 					blocks[index].setImageResource(R.drawable.grayblock);
 					sb[index].delete(0, sb[index].length()-1);
 				}

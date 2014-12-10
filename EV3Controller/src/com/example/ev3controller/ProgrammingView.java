@@ -14,6 +14,8 @@ import android.graphics.Point;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 
 import com.example.ev3controller.EV3ProgramCommand;
 
@@ -54,6 +56,8 @@ implements GestureDetector.OnGestureListener{
 	private ProgramBlock startBlock;//スタートブロックを管理する変数
 	
 	private int indentWidth;//インデントを下げる表現をする時、どれくらいずらすかを保持する
+	
+	private EV3Interpreter interpreter;
 
 	//コンストラクタ
 	public ProgrammingView(Context context){
@@ -83,6 +87,9 @@ implements GestureDetector.OnGestureListener{
 		//スタートブロックの追加
 		blockList.add(new ProgramBlock(EV3ProgramCommand.START, 30, 25, blockImage[getBlockImageIndex(EV3ProgramCommand.START)]));
 		startBlock = blockList.get(0);
+		
+		//インタプリタのインスタンス化
+		interpreter = new EV3Interpreter();
 	}
 
 	@Override
@@ -316,7 +323,7 @@ implements GestureDetector.OnGestureListener{
 	public void setInctanceBlock(){
 		Resources r = getResources();
 		int i;
-
+		
 		//動き 0~7
 		blockImage[0] = BitmapFactory.decodeResource(r, R.drawable.go0block);
 		blockImage[1] = BitmapFactory.decodeResource(r, R.drawable.go1block);
@@ -633,5 +640,12 @@ implements GestureDetector.OnGestureListener{
 				+ EV3ProgramCommand.getOutputIndentValue(block.getPrevBlock().getBlockType())
 				+ EV3ProgramCommand.getInputIndentValue(block.getBlockType()));
 		}
+	}
+
+	//プログラムを実行する関数
+	public void programRun() {
+		interpreter.setEV3material(activity);
+		//interpreter.setCode(blockList);
+		interpreter.interprete(blockList);
 	}
 }
