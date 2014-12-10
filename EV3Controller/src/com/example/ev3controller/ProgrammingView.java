@@ -94,7 +94,6 @@ implements GestureDetector.OnGestureListener{
 
 	@Override
 	protected void onDraw(Canvas canvas){
-		System.out.println("nowworkX＝"+nowWorkX);
 		//インスタンスブロック領域線
 		Paint paint = new Paint();
 
@@ -123,11 +122,10 @@ implements GestureDetector.OnGestureListener{
 
 
 		//作業スペースの左端
-		//if(nowWorkX == instanceLineX)
-		System.out.println("左端＝"+leftWorkX);
+		if(nowWorkX == instanceLineX)
 			canvas.drawLine(leftWorkX, 0, leftWorkX, dispSize.y, paint);
-		//else if(nowWorkX == rightWorkX)
-			//canvas.drawLine(dispSize.x-5, 0, dispSize.x-5, dispSize.y, paint);
+		else if(nowWorkX == rightWorkX)
+			canvas.drawLine(dispSize.x-5, 0, dispSize.x-5, dispSize.y, paint);
 
 		//インスタンスエリアの上限、下限
 		paint.setStrokeWidth(20.0f);
@@ -257,7 +255,6 @@ implements GestureDetector.OnGestureListener{
 			invalidate();
 			break;
 		case MotionEvent.ACTION_UP:
-			//TODO
 			if(touchProgramBlockFlag == true){//プログラミングブロックがインスタンスエリアで離されたら、ブロックを消す
 				for(int i=0; i<blockList.size(); i++){
 					if(blockList.get(i).getPosition().x < leftWorkX){
@@ -275,29 +272,29 @@ implements GestureDetector.OnGestureListener{
 	//View生成時にViewの大きさを設定するためのメソッド
 	public void setDisplaySize(int width, int height){
 		if(maxHeight==0){
-		//Viewの画面サイズの取得
-		dispSize.x = width;
-		dispSize.y = height;
-		//ジャンルエリアの境界線のX座標
-		genreLineX = dispSize.x / 5;
-		//インスタンスエリアの境界線のX座標
-		instanceLineX = dispSize.x / 5;
-		//ワークスペースの高さの最大
-		maxHeight = dispSize.y * 5;
-		//インスタンスエリアの高さの最大
-		maxInstanceHeight = dispSize.y * 2;
-		//作業スペースの左端
-		leftWorkX = instanceLineX;
-		//現在の作業エリアのx座標
-		nowWorkX  = instanceLineX;
-		//作業スペースの右端
-		rightWorkX = dispSize.x * 3;
-		//インスタンスブロックの初期化
-		setInctanceBlock();
-		//スタートブロックの位置の初期化
-		startBlock.setPosition(new Point(genreLineX + 60, 25));
+			//Viewの画面サイズの取得
+			dispSize.x = width;
+			dispSize.y = height;
+			//ジャンルエリアの境界線のX座標
+			genreLineX = dispSize.x / 5;
+			//インスタンスエリアの境界線のX座標
+			instanceLineX = dispSize.x / 5;
+			//ワークスペースの高さの最大
+			maxHeight = dispSize.y * 5;
+			//インスタンスエリアの高さの最大
+			maxInstanceHeight = dispSize.y * 2;
+			//作業スペースの左端
+			leftWorkX = instanceLineX;
+			//現在の作業エリアのx座標
+			nowWorkX  = instanceLineX;
+			//作業スペースの右端
+			rightWorkX = dispSize.x * 3;
+			//インスタンスブロックの初期化
+			setInctanceBlock();
+			//スタートブロックの位置の初期化
+			startBlock.setPosition(new Point(genreLineX + 60, 25));
 
-		invalidate();
+			invalidate();
 		}
 
 	}
@@ -592,19 +589,14 @@ implements GestureDetector.OnGestureListener{
 				distanceX = distanceX - (nowWorkX + distanceX - rightWorkX);
 			}
 			nowHeight = nowHeight + (int)distanceY;
-			System.out.println("前nowWorkX＝"+nowWorkX);
 			nowWorkX = nowWorkX + (int)distanceX;
-			System.out.println("後workX＝"+nowWorkX);
 			for(int i=0; i<blockList.size(); i++){//縦スクロール
 				blockList.get(i).setPosition(new Point(blockList.get(i).getPosition().x, blockList.get(i).getPosition().y - (int)distanceY));
 			}
 			for(int i=0; i<blockList.size(); i++){//横スクロール
 				blockList.get(i).setPosition(new Point(blockList.get(i).getPosition().x - (int)distanceX, blockList.get(i).getPosition().y));
 			}
-			System.out.println("前左端＝"+leftWorkX);
-			System.out.println("差分＝"+(int)distanceX);
 			leftWorkX = leftWorkX - (int)distanceX;
-			System.out.println("後左端＝"+leftWorkX);
 
 		}
 		else if(JudgeTouchInstanceBlock(e1) == -1 && e1.getX() < instanceLineX && e1.getX()>genreLineX){//インスタンスエリアのスクロール処理
@@ -652,8 +644,8 @@ implements GestureDetector.OnGestureListener{
 		for(ProgramBlock block = Sblock; block != null; block = block.getNextBlock()){
 			if(block.getPrevBlock() == null) continue;
 			block.setIndentLevel(block.getPrevBlock().getIndentLevel()
-				+ EV3ProgramCommand.getOutputIndentValue(block.getPrevBlock().getBlockType())
-				+ EV3ProgramCommand.getInputIndentValue(block.getBlockType()));
+					+ EV3ProgramCommand.getOutputIndentValue(block.getPrevBlock().getBlockType())
+					+ EV3ProgramCommand.getInputIndentValue(block.getBlockType()));
 		}
 	}
 
