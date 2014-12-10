@@ -9,14 +9,14 @@
         android:layout_height="match_parent" >
 
         <Button
-            android:id="@+id/radicon_trans_button"
+            android:id="@+id/start_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
-            android:layout_marginBottom="20dp"
-            android:layout_marginLeft="19dp"
-            android:text="ラジコン画面" />
+            android:layout_marginBottom="18dp"
+            android:layout_marginLeft="25dp"
+            android:text="スタート" />
 
     </RelativeLayout>
 
