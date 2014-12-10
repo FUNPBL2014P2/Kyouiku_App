@@ -94,6 +94,7 @@ implements GestureDetector.OnGestureListener{
 
 	@Override
 	protected void onDraw(Canvas canvas){
+		System.out.println("nowworkX＝"+nowWorkX);
 		//インスタンスブロック領域線
 		Paint paint = new Paint();
 
@@ -122,10 +123,11 @@ implements GestureDetector.OnGestureListener{
 
 
 		//作業スペースの左端
-		if(nowWorkX == instanceLineX)
-			canvas.drawLine(instanceLineX, 0, instanceLineX, dispSize.y, paint);
-		else if(nowWorkX == rightWorkX)
-			canvas.drawLine(dispSize.x-5, 0, dispSize.x-5, dispSize.y, paint);
+		//if(nowWorkX == instanceLineX)
+		System.out.println("左端＝"+leftWorkX);
+			canvas.drawLine(leftWorkX, 0, leftWorkX, dispSize.y, paint);
+		//else if(nowWorkX == rightWorkX)
+			//canvas.drawLine(dispSize.x-5, 0, dispSize.x-5, dispSize.y, paint);
 
 		//インスタンスエリアの上限、下限
 		paint.setStrokeWidth(20.0f);
@@ -204,6 +206,8 @@ implements GestureDetector.OnGestureListener{
 					Point position = new Point(block.getPosition().x + instanceLineX - basePositionX, block.getPosition().y);
 					block.setPosition(position);
 				}
+				nowWorkX = nowWorkX + instanceLineX - basePositionX;
+				leftWorkX = leftWorkX + instanceLineX - basePositionX;
 			}else if(genreLineX < event.getX() && event.getX() < instanceLineX){//もしインスタンスブロックがタッチされたら
 				int blockType = JudgeTouchInstanceBlock(event);
 				if(blockType!=-1){
@@ -219,6 +223,8 @@ implements GestureDetector.OnGestureListener{
 						Point position = new Point(block.getPosition().x + instanceLineX - basePositionX, block.getPosition().y);
 						block.setPosition(position);
 					}
+					nowWorkX = nowWorkX + instanceLineX - basePositionX;
+					leftWorkX = leftWorkX + instanceLineX - basePositionX;
 				}
 			}else if(judTouchProgramBlock(event) != -1){//もしプログラミングブロックをタッチされたら
 				touchProgramBlockFlag = true;
@@ -578,20 +584,28 @@ implements GestureDetector.OnGestureListener{
 			}else if(maxHeight < nowHeight + (int)distanceY){
 				distanceY = distanceY - (nowHeight + distanceY - maxHeight);
 			}
+
+			//TODO インスタンスエリアが出た時にdistanceXがスクロール幅以上に大きくならないようにする
 			if(nowWorkX + (int)distanceX < instanceLineX){
 				distanceX = distanceX - (nowWorkX + distanceX - instanceLineX);
 			}else if(rightWorkX < nowWorkX + (int)distanceX){
 				distanceX = distanceX - (nowWorkX + distanceX - rightWorkX);
 			}
 			nowHeight = nowHeight + (int)distanceY;
+			System.out.println("前nowWorkX＝"+nowWorkX);
 			nowWorkX = nowWorkX + (int)distanceX;
+			System.out.println("後workX＝"+nowWorkX);
 			for(int i=0; i<blockList.size(); i++){//縦スクロール
 				blockList.get(i).setPosition(new Point(blockList.get(i).getPosition().x, blockList.get(i).getPosition().y - (int)distanceY));
 			}
 			for(int i=0; i<blockList.size(); i++){//横スクロール
 				blockList.get(i).setPosition(new Point(blockList.get(i).getPosition().x - (int)distanceX, blockList.get(i).getPosition().y));
 			}
+			System.out.println("前左端＝"+leftWorkX);
+			System.out.println("差分＝"+(int)distanceX);
 			leftWorkX = leftWorkX - (int)distanceX;
+			System.out.println("後左端＝"+leftWorkX);
+
 		}
 		else if(JudgeTouchInstanceBlock(e1) == -1 && e1.getX() < instanceLineX && e1.getX()>genreLineX){//インスタンスエリアのスクロール処理
 			if(nowInstanceHeight + (int)distanceY < 0){
