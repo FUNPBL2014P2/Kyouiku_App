@@ -8,16 +8,12 @@ import android.app.Activity;
 public class EV3Interpreter{
 	private List<ProgramBlock> program;
 	
-	private int ifcount;//バグ発見用
-	private int untilcount;//バグ発見用
-	
-	private int ifmode;//バグ発見用
+	private int ifflag;//ifが真の時elseがあったらendに飛ぶフラグを管理
 	
 	private int ERROR_CODE = 0;//バグ発見用
 	
 	private EV3Materials ev3mt;
 	
-	private int forcount;
 	private ArrayList<Integer> countlist = new ArrayList<Integer>();
 	private boolean loop_now;
 	
@@ -39,9 +35,6 @@ public class EV3Interpreter{
 			ev3mt.ev3.threadstart();
 			ev3mt.setThreadstatus(1);
 		}
-		//ifcount = 0;
-		//untilcount = 0;
-		//ifmode = 0;
 		
 		loop_now=false;
 	}
@@ -76,7 +69,6 @@ public class EV3Interpreter{
 		ProgramBlock cur = program.get(0);
 		int count = 0;
 		while(cur != null && ERROR_CODE == 0){
-			System.out.println(ev3mt.ev3.getLeftTouchSensor() + ":::" + ev3mt.ev3.getLeftTouchSensor());
 			switch(cur.getBlockType()){
 			case EV3ProgramCommand.START:
 				cur = cur.getNextBlock();
@@ -114,110 +106,57 @@ public class EV3Interpreter{
 				cur = cur.getNextBlock();
 				break;
 			case EV3ProgramCommand.IRSWT:
-				if(ev3mt.ev3.getLeftTouchSensor() == true)//メソッドの取る値がおかしい
+				if(ev3mt.ev3.getRightTouchSensor() == true){
+					ifflag = 1;
 					cur = cur.getNextBlock();
-				else{
-					count = 0;
-					cur = cur.getNextBlock();
-					while(!((cur.getBlockType() == EV3ProgramCommand.ELSE || cur.getBlockType() == EV3ProgramCommand.IEND)
-							&& count == 0)){
-						if(EV3ProgramCommand.IRSWT <= cur.getBlockType() && cur.getBlockType() <= EV3ProgramCommand.IBSWT)
-							count++;
-						else if(cur.getBlockType() == EV3ProgramCommand.ELSE || cur.getBlockType() == EV3ProgramCommand.IEND)
-							count--;
-						cur = cur.getNextBlock();
-					}
+				}else{
+					cur = if_go_end(cur);
 				}
 				break;
 			case EV3ProgramCommand.ILSWT:
-				if(ev3mt.ev3.getRightTouchSensor() == true)//メソッドの取る値がおかしい
+				if(ev3mt.ev3.getLeftTouchSensor() == true){
+					ifflag = 1;
 					cur = cur.getNextBlock();
-				else{
-					count = 0;
-					cur = cur.getNextBlock();
-					while(!((cur.getBlockType() == EV3ProgramCommand.ELSE || cur.getBlockType() == EV3ProgramCommand.IEND)
-							&& count == 0)){
-						if(EV3ProgramCommand.IRSWT <= cur.getBlockType() && cur.getBlockType() <= EV3ProgramCommand.IBSWT)
-							count++;
-						else if(cur.getBlockType() == EV3ProgramCommand.ELSE || cur.getBlockType() == EV3ProgramCommand.IEND)
-							count--;
-						cur = cur.getNextBlock();
-					}				}
+				}else{
+					cur = if_go_end(cur);
+				}
 				break;
 			case EV3ProgramCommand.IBSWT:
 				if(ev3mt.ev3.getRightTouchSensor() == true
-				&& ev3mt.ev3.getLeftTouchSensor() == true)
+				&& ev3mt.ev3.getLeftTouchSensor() == true){
+					ifflag = 1;
 					cur = cur.getNextBlock();
-				else{
-					count = 0;
-					cur = cur.getNextBlock();
-					while(!((cur.getBlockType() == EV3ProgramCommand.ELSE || cur.getBlockType() == EV3ProgramCommand.IEND)
-							&& count == 0)){
-						if(EV3ProgramCommand.IRSWT <= cur.getBlockType() && cur.getBlockType() <= EV3ProgramCommand.IBSWT)
-							count++;
-						else if(cur.getBlockType() == EV3ProgramCommand.ELSE || cur.getBlockType() == EV3ProgramCommand.IEND)
-							count--;
-						cur = cur.getNextBlock();
-					}
+				}else{
+					cur = if_go_end(cur);
 				}
 				break;
 			case EV3ProgramCommand.ELSE:
-				cur = cur.getNextBlock();
+				if(ifflag == 1) cur = if_go_end(cur);
+				else cur = cur.getNextBlock();
 				break;
 			case EV3ProgramCommand.IEND:
+				ifflag = 0;
 				cur = cur.getNextBlock();
 				break;
 			case EV3ProgramCommand.URSWT:
-				//TODO getLeftTouchSensor()とgetRightTouchSensor()の取る値が逆
 				if(ev3mt.ev3.getLeftTouchSensor() == false)
 					cur = cur.getNextBlock();
 				else{
-					count = 0;
-					cur = cur.getNextBlock();
-					while(!((cur.getBlockType() == EV3ProgramCommand.UEND || cur.getBlockType() == EV3ProgramCommand.FEND) && count == 0)){
-						if((EV3ProgramCommand.URSWT <= cur.getBlockType() && cur.getBlockType() <= EV3ProgramCommand.UBSWT)
-								|| (EV3ProgramCommand.FMIN <= cur.getBlockType() && cur.getBlockType() <= EV3ProgramCommand.FMAX))
-							count++;
-						else if(cur.getBlockType() == EV3ProgramCommand.UEND)
-							count--;
-						cur = cur.getNextBlock();
-					}
-					cur = cur.getNextBlock();
+					cur = until_go_end(cur);
 				}
 				break;
 			case EV3ProgramCommand.ULSWT:
-				//TODO getLeftTouchSensor()とgetRightTouchSensor()の取る値が逆
 				if(ev3mt.ev3.getRightTouchSensor() == false)
 					cur = cur.getNextBlock();
 				else{
-					count = 0;
-					cur = cur.getNextBlock();
-					while(!((cur.getBlockType() == EV3ProgramCommand.UEND || cur.getBlockType() == EV3ProgramCommand.FEND) && count == 0)){
-						if((EV3ProgramCommand.URSWT <= cur.getBlockType() && cur.getBlockType() <= EV3ProgramCommand.UBSWT)
-								|| (EV3ProgramCommand.FMIN <= cur.getBlockType() && cur.getBlockType() <= EV3ProgramCommand.FMAX))
-							count++;
-						else if(cur.getBlockType() == EV3ProgramCommand.UEND)
-							count--;
-						cur = cur.getNextBlock();
-					}
-					cur = cur.getNextBlock();
+					cur = until_go_end(cur);
 				}
 				break;
 			case EV3ProgramCommand.UBSWT:
 				if(ev3mt.ev3.getRightTouchSensor() == false || ev3mt.ev3.getLeftTouchSensor() == false)
 					cur = cur.getNextBlock();
 				else{
-					count = 0;
-					cur = cur.getNextBlock();
-					while(!((cur.getBlockType() == EV3ProgramCommand.UEND || cur.getBlockType() == EV3ProgramCommand.FEND) && count == 0)){
-						if((EV3ProgramCommand.URSWT <= cur.getBlockType() && cur.getBlockType() <= EV3ProgramCommand.UBSWT)
-								|| (EV3ProgramCommand.FMIN <= cur.getBlockType() && cur.getBlockType() <= EV3ProgramCommand.FMAX))
-							count++;
-						else if(cur.getBlockType() == EV3ProgramCommand.UEND)
-							count--;
-						cur = cur.getNextBlock();
-					}
-					cur = cur.getNextBlock();
+					cur = until_go_end(cur);
 				}
 				break;
 			case EV3ProgramCommand.FEND:
@@ -266,6 +205,7 @@ public class EV3Interpreter{
 				break;
 			}
 		}
+		ev3SecondMoeve(0, 0);//モーターの停止
 	}
 	
 	public void ev3SecondMoeve(int right, int left){
@@ -273,5 +213,34 @@ public class EV3Interpreter{
 		ev3mt.ev3.move(right, left);
 		while(startTime + 1000 > System.currentTimeMillis()){}
 		ev3mt.ev3.stop();
+	}
+	
+	public ProgramBlock if_go_end(ProgramBlock cur){
+		int count = 0;
+		cur = cur.getNextBlock();
+		while(!((cur.getBlockType() == EV3ProgramCommand.ELSE || cur.getBlockType() == EV3ProgramCommand.IEND)
+				&& count == 0)){
+			if(EV3ProgramCommand.IRSWT <= cur.getBlockType() && cur.getBlockType() <= EV3ProgramCommand.IBSWT)
+				count++;
+			else if(cur.getBlockType() == EV3ProgramCommand.ELSE || cur.getBlockType() == EV3ProgramCommand.IEND)
+				count--;
+			cur = cur.getNextBlock();
+		}
+		return cur;
+	}
+	
+	public ProgramBlock until_go_end(ProgramBlock cur){
+		int count = 0;
+		cur = cur.getNextBlock();
+		while(!((cur.getBlockType() == EV3ProgramCommand.UEND || cur.getBlockType() == EV3ProgramCommand.FEND) && count == 0)){
+			if((EV3ProgramCommand.URSWT <= cur.getBlockType() && cur.getBlockType() <= EV3ProgramCommand.UBSWT)
+					|| (EV3ProgramCommand.FMIN <= cur.getBlockType() && cur.getBlockType() <= EV3ProgramCommand.FMAX))
+				count++;
+			else if(cur.getBlockType() == EV3ProgramCommand.UEND)
+				count--;
+			cur = cur.getNextBlock();
+		}
+		cur = cur.getNextBlock();
+		return cur;
 	}
 }
