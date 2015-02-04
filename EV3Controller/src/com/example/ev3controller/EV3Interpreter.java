@@ -47,7 +47,7 @@ public class EV3Interpreter{
 	}
 	
 	public void setEV3material(Activity activity){
-		ev3mt = (EV3Materials)activity.getApplication() ;
+		ev3mt = (EV3Materials)activity.getApplication();
 	}
 	
 	public void setCode(List<ProgramBlock> source){
@@ -76,7 +76,7 @@ public class EV3Interpreter{
 		ProgramBlock cur = program.get(0);
 		int count = 0;
 		while(cur != null && ERROR_CODE == 0){
-			System.out.println(ev3mt.ev3.getLeftTouchSensor() + ":::" + ev3mt.ev3.getLeftTouchSensor());
+			System.out.println(cur.getBlockType());
 			switch(cur.getBlockType()){
 			case EV3ProgramCommand.START:
 				cur = cur.getNextBlock();
@@ -119,7 +119,8 @@ public class EV3Interpreter{
 				else{
 					count = 0;
 					cur = cur.getNextBlock();
-					while(!((cur.getBlockType() == EV3ProgramCommand.ELSE || cur.getBlockType() == EV3ProgramCommand.IEND)
+					if(cur == null) break;
+					while(cur != null && !((cur.getBlockType() == EV3ProgramCommand.ELSE || cur.getBlockType() == EV3ProgramCommand.IEND)
 							&& count == 0)){
 						if(EV3ProgramCommand.IRSWT <= cur.getBlockType() && cur.getBlockType() <= EV3ProgramCommand.IBSWT)
 							count++;
@@ -135,7 +136,8 @@ public class EV3Interpreter{
 				else{
 					count = 0;
 					cur = cur.getNextBlock();
-					while(!((cur.getBlockType() == EV3ProgramCommand.ELSE || cur.getBlockType() == EV3ProgramCommand.IEND)
+					if(cur == null) break;
+					while(cur != null && !((cur.getBlockType() == EV3ProgramCommand.ELSE || cur.getBlockType() == EV3ProgramCommand.IEND)
 							&& count == 0)){
 						if(EV3ProgramCommand.IRSWT <= cur.getBlockType() && cur.getBlockType() <= EV3ProgramCommand.IBSWT)
 							count++;
@@ -151,7 +153,8 @@ public class EV3Interpreter{
 				else{
 					count = 0;
 					cur = cur.getNextBlock();
-					while(!((cur.getBlockType() == EV3ProgramCommand.ELSE || cur.getBlockType() == EV3ProgramCommand.IEND)
+					if(cur == null) break;
+					while(cur != null && !((cur.getBlockType() == EV3ProgramCommand.ELSE || cur.getBlockType() == EV3ProgramCommand.IEND)
 							&& count == 0)){
 						if(EV3ProgramCommand.IRSWT <= cur.getBlockType() && cur.getBlockType() <= EV3ProgramCommand.IBSWT)
 							count++;
@@ -163,6 +166,7 @@ public class EV3Interpreter{
 				break;
 			case EV3ProgramCommand.ELSE:
 				cur = cur.getNextBlock();
+				if(cur == null) break;
 				break;
 			case EV3ProgramCommand.IEND:
 				cur = cur.getNextBlock();
@@ -266,6 +270,7 @@ public class EV3Interpreter{
 				break;
 			}
 		}
+		ev3mt.ev3.move(0, 0);
 	}
 	
 	public void ev3SecondMoeve(int right, int left){
