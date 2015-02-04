@@ -537,7 +537,7 @@ implements GestureDetector.OnGestureListener{
 	//どのプログラムブロックにタッチしたかを判定し順番をソートするメソッド
 	public int judTouchProgramBlock(MotionEvent event){
 		for(int i=blockList.size()-1; i>=0; i--){
-			if(blockList.get(i).isTouch(event) && blockList.get(i).getBlockType() != EV3ProgramCommand.START){
+			if(blockList.get(i).isTouch(event, indentWidth) && blockList.get(i).getBlockType() != EV3ProgramCommand.START){
 				blockList.add(blockList.get(i));
 				blockList.remove(i);
 				return blockList.size()-1;
@@ -662,7 +662,6 @@ implements GestureDetector.OnGestureListener{
 	//プログラムを実行する関数
 	public void programRun() {
 		interpreter.setEV3material(activity);
-		//interpreter.setCode(blockList);
 		interpreter.interprete(blockList);
 	}
 }

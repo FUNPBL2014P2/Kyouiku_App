@@ -2,6 +2,7 @@ package com.example.ev3controller;
 
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.view.MotionEvent;
 
 public class ProgramBlock extends Block{
 	private ProgramBlock next, prev;//接続されている前と後ろのブロック
@@ -67,5 +68,20 @@ public class ProgramBlock extends Block{
 	//インデントレベルを取得する
 	public int getIndentLevel(){
 		return indent;
+	}
+	
+	//ブロックがタッチされたかを判定するメソッド(flaot, float, flaot)
+	public boolean isTouch(float x, float y, float indentW){
+		if(point.x + indentW * indent <= x && x <= point.x + width  + indentW * indent &&
+				point.y <= y && y <= point.y + height){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	//ブロックがタッチされたかを判定するメソッド(Events)
+	public boolean isTouch(MotionEvent event, float indentW){
+		return isTouch(event.getX(), event.getY(), indentW);
 	}
 }
