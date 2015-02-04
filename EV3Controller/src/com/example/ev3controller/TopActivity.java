@@ -63,6 +63,22 @@ public class TopActivity extends Activity {
 		
 		setUpButtons();
 	}
+	/*Activity特有のonHogeを試した痕跡*/
+//	protected void onPause() {
+//		super.onPause();
+//		Toast.makeText(this, "top is stop", Toast.LENGTH_SHORT).show();
+//	}
+//	
+	protected void onRestart() {
+		super.onRestart();
+		//Toast.makeText(this, "top is restarted", Toast.LENGTH_SHORT).show();
+		ev3mt = (EV3Materials)this.getApplication() ;
+		if(ev3mt.getThreadstatus() == 1){
+			ev3mt.ev3.threadstop();
+			ev3mt.setThreadstatus(0);
+			System.out.println("thread off");
+			}
+	}
 
 	private void findViews() {
 
@@ -152,8 +168,9 @@ public class TopActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				//timer.cancel();
-				ev3mt.ev3.threadstop();
-				ev3mt.setThreadstatus(0);
+				/*前のスレッド終了地点*/
+				//ev3mt.ev3.threadstop();
+				//ev3mt.setThreadstatus(0);
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
