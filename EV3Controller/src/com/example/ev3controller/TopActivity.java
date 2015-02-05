@@ -69,16 +69,7 @@ public class TopActivity extends Activity {
 //		Toast.makeText(this, "top is stop", Toast.LENGTH_SHORT).show();
 //	}
 //	
-	protected void onRestart() {
-		super.onRestart();
-		//Toast.makeText(this, "top is restarted", Toast.LENGTH_SHORT).show();
-		ev3mt = (EV3Materials)this.getApplication() ;
-		if(ev3mt.getThreadstatus() == 1){
-			ev3mt.ev3.threadstop();
-			ev3mt.setThreadstatus(0);
-			System.out.println("thread off");
-			}
-	}
+	
 
 	private void findViews() {
 
