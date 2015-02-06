@@ -520,6 +520,8 @@ implements GestureDetector.OnGestureListener{
 
 	//タッチしているブロックの上にあるブロックと関係を繋げるメソッド
 	public void connectPrevBlock(int i){
+		if(blockList.get(blockList.size()-1).getPrevBlock() != null)
+			blockList.get(blockList.size()-1).getPrevBlock().setNextBlock(null);
 		blockList.get(i).setNextBlock(blockList.get(blockList.size()-1));
 		blockList.get(blockList.size()-1).setPrevBlock(blockList.get(i));
 		arrangeIndent(blockList.get(blockList.size()-1));
