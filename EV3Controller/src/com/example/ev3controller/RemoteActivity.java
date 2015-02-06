@@ -38,15 +38,14 @@ public class RemoteActivity extends Activity {
 			setUpViews(arrows[i], i);
 		}
 		
-		if(ev3mt.getThreadstatus() == 0){
-		ev3mt.ev3.threadstart();
-		ev3mt.setThreadstatus(1);
-		}
-		
+//		if(ev3mt.getThreadstatus() == 0){
+//			ev3mt.ev3.threadstart();
+//			ev3mt.setThreadstatus(1);
+//		}
 	}
-	protected void onRestart() {
+	protected void onStart() {
 		super.onRestart();
-		//Toast.makeText(this, "remote is restarted", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "remote is restarted", Toast.LENGTH_SHORT).show();
 		ev3mt = (EV3Materials)this.getApplication() ;
 		if(ev3mt.getThreadstatus() == 0){
 			ev3mt.ev3.threadstart();
@@ -56,13 +55,13 @@ public class RemoteActivity extends Activity {
 	}
 	protected void onPause() {
 		super.onPause();
-		//Toast.makeText(this, "remote is paused", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "remote is paused", Toast.LENGTH_SHORT).show();
 		ev3mt = (EV3Materials)this.getApplication() ;
 		if(ev3mt.getThreadstatus() == 1){
 			ev3mt.ev3.threadstop();
 			ev3mt.setThreadstatus(0);
 			System.out.println("thread off");
-			}
+		}	
 	}
 
 	
