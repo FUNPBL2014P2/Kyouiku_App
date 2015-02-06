@@ -40,7 +40,7 @@ public class EV3Interpreter{
 	}
 	
 	public void setEV3material(Activity activity){
-		ev3mt = (EV3Materials)activity.getApplication() ;
+		ev3mt = (EV3Materials)activity.getApplication();
 	}
 	
 	public void setCode(List<ProgramBlock> source){
