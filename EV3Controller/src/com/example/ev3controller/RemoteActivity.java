@@ -51,7 +51,7 @@ public class RemoteActivity extends Activity {
 			ev3mt.ev3.threadstart();
 			ev3mt.setThreadstatus(1);
 			System.out.println("thread on");
-			}
+		}
 	}
 	protected void onPause() {
 		super.onPause();
