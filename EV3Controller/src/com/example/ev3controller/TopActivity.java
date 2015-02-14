@@ -63,6 +63,19 @@ public class TopActivity extends Activity {
 		
 		setUpButtons();
 	}
+	/*Activity特有のonHogeを試した痕跡*/
+	//topを抜けるたびにev3のもろもろを使えるように用意
+	protected void onPause() {
+		super.onPause();
+		Toast.makeText(this, "top is stop", Toast.LENGTH_SHORT).show();
+		ev3mt.ev3 = new EV3(ev3mt.blocks,Str);
+		for (int i = 0; i < 4; i++) {
+			//String name = mSensors[i].getName();
+			//Log.d("MainActivity", "Name: " + name);
+		}
+	}
+	
+	
 
 	private void findViews() {
 
@@ -152,8 +165,9 @@ public class TopActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				//timer.cancel();
-				ev3mt.ev3.threadstop();
-				ev3mt.setThreadstatus(0);
+				/*前のスレッド終了地点*/
+				//ev3mt.ev3.threadstop();
+				//ev3mt.setThreadstatus(0);
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
@@ -166,11 +180,11 @@ public class TopActivity extends Activity {
 		Toast.makeText(this, "EV3 Connected", Toast.LENGTH_SHORT).show();
 
 
-		ev3mt.ev3 = new EV3(ev3mt.blocks,Str);
-		for (int i = 0; i < 4; i++) {
-			//String name = mSensors[i].getName();
-			//Log.d("MainActivity", "Name: " + name);
-		}
+//		ev3mt.ev3 = new EV3(ev3mt.blocks,Str);
+//		for (int i = 0; i < 4; i++) {
+//			//String name = mSensors[i].getName();
+//			//Log.d("MainActivity", "Name: " + name);
+//		}
 		
 		BTstate=true;
 		

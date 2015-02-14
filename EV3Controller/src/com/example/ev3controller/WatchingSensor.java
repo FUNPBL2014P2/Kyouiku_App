@@ -30,9 +30,11 @@ public class WatchingSensor extends Thread{
 			for(int i=0;i<4;i++){
 				if(Sensors[i].getPercentValue()>=50){
 					sb[i].append('p');
+
 				}
 				else{
 					sb[i].append('g');
+
 				}
 				//Handlerに通知する
 				Message msg = new Message();

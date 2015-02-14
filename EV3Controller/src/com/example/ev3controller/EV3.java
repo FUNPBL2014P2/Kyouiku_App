@@ -46,11 +46,14 @@ public class EV3 {
 	}
 
 	public void threadstart(){
-			thread.start();
+		if(thread != null){
+		thread.start();
+		}
 	}
 	
 	public void threadstop(){
 		thread.interrupt();
+		thread = null;
 	}
 
 	public void move(int right, int left){
