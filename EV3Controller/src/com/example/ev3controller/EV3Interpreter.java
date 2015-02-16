@@ -60,9 +60,11 @@ public class EV3Interpreter{
 	}
 	
 	public void destroy(){
+		ev3mt.ev3.threadstop();
 		program = null;
 		ev3mt.ev3.stop();
 		ev3mt = null;
+		
 	}
 	
 	public void interprete_run(){

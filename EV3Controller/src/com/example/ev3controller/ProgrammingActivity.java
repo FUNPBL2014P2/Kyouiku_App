@@ -13,14 +13,19 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.util.Log;
 
 public class ProgrammingActivity extends Activity {
+	EV3Materials ev3mt;
+	
 	private ProgrammingView programmingview;
 	private View buttonView;
 	private Button RunButton;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		ev3mt = (EV3Materials)this.getApplication() ;
 		
 		//メインビューの設定
 		programmingview = new ProgrammingView(this);
@@ -34,8 +39,13 @@ public class ProgrammingActivity extends Activity {
 		RunButton = (Button) findViewById(R.id.start_button);
 		RunButton.setOnClickListener(new OnClickListener() {
 			@Override
+			
 			public void onClick(View v) {
+				
+
 				programmingview.programRun();
+				Log.v("OnClick", "Button was clicked.");
+				//RunButton.setClickable(false);
 			}
 		});
 	}
