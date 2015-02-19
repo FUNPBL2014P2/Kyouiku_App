@@ -69,6 +69,7 @@ public class EV3Interpreter{
 		ProgramBlock cur = program.get(0);
 		int count = 0;
 		while(cur != null && ERROR_CODE == 0){
+			System.out.println(cur.getBlockType());
 			switch(cur.getBlockType()){
 			case EV3ProgramCommand.START:
 				cur = cur.getNextBlock();
@@ -241,6 +242,7 @@ public class EV3Interpreter{
 			cur = cur.getNextBlock();
 		}
 		cur = cur.getNextBlock();
+		loop_now = false;
 		return cur;
 	}
 }
