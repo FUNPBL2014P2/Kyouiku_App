@@ -12,6 +12,7 @@ import android.os.Message;
 
 public class WatchingSensor extends Thread{
 	public EV3Materials ev3mt;
+	public boolean loop_flag;
 	
 	StringBuffer[] sb;
 	private UnidentifiedSensor[] Sensors = new UnidentifiedSensor[4];
@@ -26,26 +27,30 @@ public class WatchingSensor extends Thread{
 	}
 
 	public void run(){
-		while(!Thread.currentThread().isInterrupted()){
-			for(int i=0;i<4;i++){
-				if(Sensors[i].getPercentValue()>=50){
-					sb[i].append('p');
-
+		loop_flag = true;
+		while(loop_flag){
+			try{
+				Thread.sleep(10);
+				for(int i=0;i<4;i++){
+					if(Sensors[i].getPercentValue()>=50){
+						sb[i].append('p');
+	
+					}
+					else{
+						sb[i].append('g');
+	
+					}
+					//Handlerに通知する
+					Message msg = new Message();
+					//msgのwhatにselectedIndexの値を格納
+					msg.what = i;
+					//handlerにmsgをsendする。
+					handler.sendMessage(msg);
+					if(ev3mt.getFunctionstatus() == 2){
+						sb[i].delete(0, sb[i].length()-1);
+					}
 				}
-				else{
-					sb[i].append('g');
-
-				}
-				//Handlerに通知する
-				Message msg = new Message();
-				//msgのwhatにselectedIndexの値を格納
-				msg.what = i;
-				//handlerにmsgをsendする。
-				handler.sendMessage(msg);
-				if(ev3mt.getFunctionstatus() == 2){
-					sb[i].delete(0, sb[i].length()-1);
-				}
-			}
+			}catch(InterruptedException e){}
 		}
 	}
 

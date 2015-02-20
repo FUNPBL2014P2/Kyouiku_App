@@ -106,19 +106,10 @@ public class MainActivity extends Activity {
 							event.getY() <= arrows[i].getY() + arrows[i].getHeight() * 2)
 						number=i;
 				}
-				if(number==8){
-					System.out.println("DON'T TOUCH ARROWS");
-					System.out.println(event.getX()+":"+event.getY());
-				}else{
-					System.out.println("YOU TOUCH NUMBER "+number+" ARROW");
-					System.out.println(arrows[number].getX()+":"+arrows[number].getWidth()+":"+arrows[number].getY()+":"+
-							arrows[number].getHeight()+":"+event.getX()+":"+event.getY());
-				}
 				if(number<8) moveEV3(number);
 				break;
 			case MotionEvent.ACTION_UP:
 				//ストップ
-				System.out.println("UP");
 				ev3.stop();
 			}
 		}
