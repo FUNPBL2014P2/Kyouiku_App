@@ -29,25 +29,28 @@ public class WatchingSensor extends Thread{
 	public void run(){
 		loop_flag = true;
 		while(loop_flag){
-			for(int i=0;i<4;i++){
-				if(Sensors[i].getPercentValue()>=50){
-					sb[i].append('p');
-
+			try{
+				Thread.sleep(10);
+				for(int i=0;i<4;i++){
+					if(Sensors[i].getPercentValue()>=50){
+						sb[i].append('p');
+	
+					}
+					else{
+						sb[i].append('g');
+	
+					}
+					//Handlerに通知する
+					Message msg = new Message();
+					//msgのwhatにselectedIndexの値を格納
+					msg.what = i;
+					//handlerにmsgをsendする。
+					handler.sendMessage(msg);
+					if(ev3mt.getFunctionstatus() == 2){
+						sb[i].delete(0, sb[i].length()-1);
+					}
 				}
-				else{
-					sb[i].append('g');
-
-				}
-				//Handlerに通知する
-				Message msg = new Message();
-				//msgのwhatにselectedIndexの値を格納
-				msg.what = i;
-				//handlerにmsgをsendする。
-				handler.sendMessage(msg);
-				if(ev3mt.getFunctionstatus() == 2){
-					sb[i].delete(0, sb[i].length()-1);
-				}
-			}
+			}catch(InterruptedException e){}
 		}
 	}
 
