@@ -26,7 +26,6 @@ public class EV3 {
 
 		wSensor = new WatchingSensor(mSensors, Str, blocks);
 		this.Str = Str;
-		System.out.println("スレッド");
 	}
 
 	public boolean getLeftTouchSensor(){
