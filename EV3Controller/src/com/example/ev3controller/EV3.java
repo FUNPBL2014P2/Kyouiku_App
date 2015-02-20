@@ -52,6 +52,27 @@ public class EV3 {
 	}
 
 	public void move(int right, int left){
+		/*
+		// enPiT EV3 未調整
+		if(right == left && right != 0){
+			if(right > 0) right = 90;
+			else left=-90;
+		}
+		*/
+		/*
+		// Barance EV3
+		if(right == left && right != 0){
+			if(right > 0) right = 97;
+			else left=-95;
+		}
+		*/
+		// Ito Ken EV3
+		
+		if(right == left && right != 0){
+			if(right > 0) right = 93;
+			else left=-97;
+		}
+		
 		mMotors[0].setSpeed(Math.abs(right));
 		mMotors[3].setSpeed(Math.abs(left));
 
