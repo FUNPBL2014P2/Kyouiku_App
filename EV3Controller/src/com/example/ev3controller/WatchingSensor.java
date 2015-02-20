@@ -12,6 +12,7 @@ import android.os.Message;
 
 public class WatchingSensor extends Thread{
 	public EV3Materials ev3mt;
+	public boolean loop_flag;
 	
 	StringBuffer[] sb;
 	private UnidentifiedSensor[] Sensors = new UnidentifiedSensor[4];
@@ -26,7 +27,8 @@ public class WatchingSensor extends Thread{
 	}
 
 	public void run(){
-		while(!Thread.currentThread().isInterrupted()){
+		loop_flag = true;
+		while(loop_flag){
 			for(int i=0;i<4;i++){
 				if(Sensors[i].getPercentValue()>=50){
 					sb[i].append('p');

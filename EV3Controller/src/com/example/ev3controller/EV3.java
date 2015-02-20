@@ -11,6 +11,8 @@ public class EV3 {
 	private Motor[] mMotors = new Motor[4];
 	Thread thread;
 	StringBuffer[] Str;
+	WatchingSensor wSensor;
+	
 	public EV3(ImageView[] blocks, StringBuffer[] Str){
 		mMotors[0] = Motor.A;
 		mMotors[1] = Motor.B;
@@ -22,13 +24,9 @@ public class EV3 {
 		mSensors[2] = new UnidentifiedSensor(SensorPort.S3);
 		mSensors[3] = new UnidentifiedSensor(SensorPort.S4);
 
-		WatchingSensor wSensor = new WatchingSensor(mSensors, Str, blocks);
+		wSensor = new WatchingSensor(mSensors, Str, blocks);
 		this.Str = Str;
-		//timer.schedule(wSensor, 0,1);
 		System.out.println("スレッド");
-		thread = new Thread(wSensor);
-		//thread.start();
-
 	}
 
 	public boolean getLeftTouchSensor(){
@@ -46,15 +44,12 @@ public class EV3 {
 	}
 
 	public void threadstart(){
-//		if(thread != null){
-//		thread.start();
-//		}
+		thread = new Thread(wSensor);
 		thread.start();
 	}
 	
 	public void threadstop(){
-		thread.interrupt();
-		//thread = null;
+		wSensor.loop_flag = false;
 	}
 
 	public void move(int right, int left){

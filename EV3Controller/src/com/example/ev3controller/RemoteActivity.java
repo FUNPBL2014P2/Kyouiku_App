@@ -50,7 +50,6 @@ public class RemoteActivity extends Activity {
 		if(ev3mt.getThreadstatus() == 0){
 			ev3mt.ev3.threadstart();
 			ev3mt.setThreadstatus(1);
-			System.out.println("thread on");
 		}
 	}
 	protected void onPause() {
@@ -60,7 +59,6 @@ public class RemoteActivity extends Activity {
 		if(ev3mt.getThreadstatus() == 1){
 			ev3mt.ev3.threadstop();
 			ev3mt.setThreadstatus(0);
-			System.out.println("thread off");
 		}	
 	}
 
@@ -107,19 +105,10 @@ public class RemoteActivity extends Activity {
 							event.getY() <= arrows[i].getY() + arrows[i].getHeight() * 2)
 						number=i;
 				}
-				if(number==8){
-					System.out.println("DON'T TOUCH ARROWS");
-					System.out.println(event.getX()+":"+event.getY());
-				}else{
-					System.out.println("YOU TOUCH NUMBER "+number+" ARROW");
-					System.out.println(arrows[number].getX()+":"+arrows[number].getWidth()+":"+arrows[number].getY()+":"+
-							arrows[number].getHeight()+":"+event.getX()+":"+event.getY());
-				}
 				if(number<8) moveEV3(number);
 				break;
 			case MotionEvent.ACTION_UP:
 				//ストップ
-				System.out.println("UP");
 				ev3mt.ev3.stop();
 			}
 		
